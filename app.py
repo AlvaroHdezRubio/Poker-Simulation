@@ -134,7 +134,7 @@ def card_visual_name(card):
     rank = card[0]
     suit = card[1]
 
-    return R[1ANK_NAMESank] + SUIT_SYMBOLS[suit]
+    return RANK_NAMES[rank] + SUIT_SYMBOLS[suit]
 
 
 # ============================================================
