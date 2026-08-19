@@ -26,4 +26,3 @@ if st.button("Probar aplicación"):
     st.success(
         "Streamlit está funcionando correctamente."
     )
-`
