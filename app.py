@@ -53,6 +53,14 @@ div[data-testid="stPopover"]>button{min-height:3.6rem!important;border-radius:6p
 div[data-testid="stPopoverBody"] button{min-height:2.1rem!important}div[data-testid="stPopoverBody"] button p{font-size:.68rem!important}
 [data-testid="stWidgetLabel"] p{font-size:.64rem!important}[data-testid="stNumberInput"] input,[data-testid="stNumberInput"] button,div[data-baseweb="select"]>div{min-height:2.25rem!important}div[data-testid="stButton"] button{min-height:2.25rem;font-size:.74rem}.hand-summary{padding:.4rem .48rem;font-size:.68rem}.results-grid{gap:.2rem}.result-card{padding:.42rem .06rem}.result-label{font-size:.47rem}.result-value{font-size:.9rem}.joker-background{width:155px;height:50vh;right:-35px;bottom:-5px;opacity:.16;mix-blend-mode:multiply;-webkit-mask-image:linear-gradient(to right,transparent 0%,rgba(0,0,0,.12) 30%,black 72%),linear-gradient(to top,transparent 0%,black 14%);-webkit-mask-composite:source-in;mask-image:linear-gradient(to right,transparent 0%,rgba(0,0,0,.12) 30%,black 72%),linear-gradient(to top,transparent 0%,black 14%);mask-composite:intersect;filter:saturate(.75) contrast(1.1) brightness(.72)}
 }
+
+/* Mantener filas compactas en móvil */
+[data-testid="stHorizontalBlock"] {flex-wrap:nowrap!important;gap:.45rem!important}
+@media(max-width:640px){
+[data-testid="stHorizontalBlock"]{flex-wrap:nowrap!important;gap:.22rem!important}
+[data-testid="stPopoverBody"] [data-testid="stHorizontalBlock"]{gap:.12rem!important}
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -185,28 +193,60 @@ st.markdown('<div class="brand-header"><div class="brand-main"><span class="bran
 
 with st.container(border=True):
     st.markdown('<div class="section-title">Tus cartas</div>', unsafe_allow_html=True)
-    h1, h2 = st.columns(2)
-    with h1: card_picker("hero_card_1", "Carta 1")
-    with h2: card_picker("hero_card_2", "Carta 2")
+
+    hero_row = st.container(horizontal=True, gap="small")
+    hero_1 = hero_row.container(width="stretch")
+    hero_2 = hero_row.container(width="stretch")
+    with hero_1:
+        card_picker("hero_card_1", "Carta 1")
+    with hero_2:
+        card_picker("hero_card_2", "Carta 2")
 
     st.markdown('<div class="section-title">Cartas comunitarias</div>', unsafe_allow_html=True)
-    f1, f2, f3 = st.columns(3)
-    with f1: card_picker("flop_card_1", "Flop 1", True)
-    with f2: card_picker("flop_card_2", "Flop 2", True)
-    with f3: card_picker("flop_card_3", "Flop 3", True)
-    t, r = st.columns(2)
-    with t: card_picker("turn_card", "Turn", True)
-    with r: card_picker("river_card", "River", True)
 
-    c1, c2 = st.columns(2)
-    with c1:
-        active_players = st.number_input("Jugadores activos", 2, 10, step=1, key="active_players", on_change=clear_result)
-    with c2:
-        simulations = st.selectbox("Simulaciones", [10000,25000,50000,100000], format_func=lambda v:f"{v:,}".replace(",","."), key="simulations", on_change=clear_result)
+    flop_row = st.container(horizontal=True, gap="small")
+    flop_1 = flop_row.container(width="stretch")
+    flop_2 = flop_row.container(width="stretch")
+    flop_3 = flop_row.container(width="stretch")
+    with flop_1:
+        card_picker("flop_card_1", "Flop 1", True)
+    with flop_2:
+        card_picker("flop_card_2", "Flop 2", True)
+    with flop_3:
+        card_picker("flop_card_3", "Flop 3", True)
 
-    b1, b2 = st.columns(2)
-    with b1: calculate_button = st.button("Calcular probabilidades", type="primary", use_container_width=True)
-    with b2: st.button("Nueva mano", use_container_width=True, on_click=reset_hand)
+    turn_river_row = st.container(horizontal=True, gap="small")
+    turn_slot = turn_river_row.container(width="stretch")
+    river_slot = turn_river_row.container(width="stretch")
+    with turn_slot:
+        card_picker("turn_card", "Turn", True)
+    with river_slot:
+        card_picker("river_card", "River", True)
+
+    config_row = st.container(horizontal=True, gap="small")
+    players_slot = config_row.container(width="stretch")
+    simulations_slot = config_row.container(width="stretch")
+    with players_slot:
+        active_players = st.number_input(
+            "Jugadores activos", 2, 10, step=1,
+            key="active_players", on_change=clear_result
+        )
+    with simulations_slot:
+        simulations = st.selectbox(
+            "Simulaciones", [10000, 25000, 50000, 100000],
+            format_func=lambda value: f"{value:,}".replace(",", "."),
+            key="simulations", on_change=clear_result
+        )
+
+    actions_row = st.container(horizontal=True, gap="small")
+    calculate_slot = actions_row.container(width="stretch")
+    reset_slot = actions_row.container(width="stretch")
+    with calculate_slot:
+        calculate_button = st.button(
+            "Calcular probabilidades", type="primary", width="stretch"
+        )
+    with reset_slot:
+        st.button("Nueva mano", width="stretch", on_click=reset_hand)
 
 if calculate_button:
     try:
