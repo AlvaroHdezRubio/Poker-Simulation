@@ -51,7 +51,7 @@ st.markdown(
     """
     <style>
 
-    # Ocultar la cabecera de Streamlit */
+    # Ocultar la cabecera de Streamlit  
     [data-testid="stHeader"],
     [data-testid="stToolbar"] {
         display: none !important;
@@ -67,7 +67,7 @@ st.markdown(
     }
 
 
-    # Fondo tipo tapete */
+    # Fondo tipo tapete  
     .stApp {
         background:
             radial-gradient(
@@ -82,7 +82,7 @@ st.markdown(
     }
 
 
-    # Contenedor principal */
+    # Contenedor principal  
     .block-container {
         position: relative;
         z-index: 5;
@@ -97,7 +97,7 @@ st.markdown(
 
     # ------------------------------------------------------
        MARCA
-       ------------------------------------------------------ */
+       ------------------------------------------------------  
 
     .brand-header {
         pos*tion: relative;
@@ -146,7 +146,7 @@ st.markdown(
 
     # ------------------------------------------------------
        PANEL
-       ------------------------------------------------------ */
+       ------------------------------------------------------  
 
     div[data-testid="stVerticalBlockBorderWrapper"] {
         back*round:
@@ -166,7 +166,7 @@ st.markdown(
     }
 
 
-    # Títulos */
+    # Títulos  
     .section-title {
         color: #ffffff !important;
 
@@ -184,7 +184,7 @@ st.markdown(
     }
 
 
-    # Etiquetas Carta 1, Flop 1, etc. */
+    # Etiquetas Carta 1, Flop 1, etc.  
     .card-position-label {
         display: block;
 
@@ -208,7 +208,7 @@ st.markdown(
 
     # ------------------------------------------------------
        CARTAS PRINCIPALES
-       ------------------------------------------------------ */
+       ------------------------------------------------------  
 
     div[data-testid="stPopover"] > button {
         position: relative !important;
@@ -257,7 +257,7 @@ st.markdown(
     }
 
 
-    # Contenedor del texto del naipe */
+    # Contenedor del texto del naipe  
     div[data-testid="stPopover"] > button
     [data-testid="stMarkdownContainer"] {
         position: relative !important;
@@ -272,7 +272,7 @@ st.markdown(
     }
 
 
-    # Texto base negro */
+    # Texto base negro  
     div[data-testid="stPopover"] > button
     [data-testid="stMarkdownContainer"] p {
         color: #111111 !important;
@@ -286,7 +286,7 @@ st.markdown(
     }
 
 
-    # Colores personalizados de Streamlit */
+    # Colores personalizados de Streamlit  
     div[data-testid="stPopover"] > button
     [data-testid="stMarkdownContainer"] span {
         font-size: 1.55rem !important;
@@ -309,7 +309,7 @@ st.markdown(
 
     # ------------------------------------------------------
        POPOVER DE SELECCION
-       ------------------------------------------------------ */
+       ------------------------------------------------------  
 
     .picker-title {
         color: #ffffff !important;
@@ -321,7 +321,7 @@ st.markdown(
     }
 
 
-    # Cuadrados del selector */
+    # Cuadrados del selector  
     div[data-testid="stPopoverBody"] button {
         width: 100% !important;
         min-width: 0 !important;
@@ -376,7 +376,7 @@ st.markdown(
 
     # ------------------------------------------------------
        CONTROLES
-       ------------------------------------------------------ */
+       ------------------------------------------------------  
 
     [data-testid="stWidgetLabel"] p {
         color: #ffffff !important;
@@ -425,7 +425,7 @@ st.markdown(
     }
 
 
-    # Botones */
+    # Botones  
     div[data-testid="stButton"] button {
         min-height: 2.45rem;
 
@@ -457,7 +457,7 @@ st.markdown(
 
     # ------------------------------------------------------
        RESULTADOS
-       ------------------------------------------------------ */
+       ------------------------------------------------------  
 
     .hand-summary {
         margin-top: 0.65rem;
@@ -563,7 +563,7 @@ st.markdown(
     }
 
 
-    # Joker */
+    # Joker  
     .joker-background {
         position: fixed;
 
@@ -587,7 +587,7 @@ st.markdown(
 
     # ======================================================
        MOVIL
-       ====================================================== */
+       ======================================================  
 
     @media screen and (max-width: 640px) {
 
@@ -601,7 +601,7 @@ st.markdown(
         }
 
 
-        # Marca más compacta y sin solapamiento */
+        # Marca más compacta y sin solapamiento  
         .brand-header {
             margin-bottom: 0.42rem;
         }
@@ -637,7 +637,7 @@ st.markdown(
         }
 
 
-        # Cartas compactas */
+        # Cartas compactas  
         div[data-testid="stPopover"] > button {
             min-height: 3.8rem !important;
 
@@ -655,7 +655,7 @@ st.markdown(
         }
 
 
-        # Selector compacto, 6 cartas por fila */
+        # Selector compacto, 6 cartas por fila  
         div[data-testid="stPopoverBody"] button {
             min-height: 2.25rem !important;
 
