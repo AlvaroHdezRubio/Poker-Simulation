@@ -28,28 +28,23 @@ st.set_page_config(
 
 def load_image_as_base64(image_path):
     """
-    Convierte joker.png en texto Base64.
-
-    Esto permite utilizar la imagen como elemento decorativo
-    dentro del fondo de la aplicación.
+    Convierte joker.png en texto Base64 para utilizarlo
+    como imagen decorativa dentro del fondo.
     """
 
     path = Path(image_path)
 
-    # Si la imagen no existe, la aplicación seguirá funcionando.
+    # Si la imagen no existe, la aplicación continúa funcionando.
     if not path.exists():
         return None
 
     with path.open("rb") as image_file:
-
-        encoded_image = base64.b64encode(
+        return base64.b64encode(
             image_file.read()
         ).decode("utf-8")
 
-    return encoded_image
 
-
-# joker.png debe estar en el mismo directorio que app.py.
+# joker.png debe estar en el mismo nivel que app.py.
 JOKER_IMAGE = load_image_as_base64("joker.png")
 
 
@@ -62,7 +57,7 @@ st.markdown(
     <style>
 
     /* ------------------------------------------------------
-       OCULTAR LA CABECERA DE STREAMLIT
+       OCULTAR CABECERA DE STREAMLIT
        ------------------------------------------------------ */
 
     [data-testid="stHeader"],
@@ -81,7 +76,7 @@ st.markdown(
 
 
     /* ------------------------------------------------------
-       FONDO GENERAL TIPO TAPETE
+       FONDO GENERAL
        ------------------------------------------------------ */
 
     .stApp {
@@ -114,7 +109,7 @@ st.markdown(
     }
 
     div[data-testid="stVerticalBlock"] {
-        gap: 0.32rem;
+        gap: 0.34rem;
     }
 
 
@@ -126,9 +121,7 @@ st.markdown(
         position: relative;
         z-index: 20;
 
-        display: block;
-
-        margin: 0 0 0.70rem 0;
+        margin: 0 0 0.75rem 0;
         padding: 0;
     }
 
@@ -171,7 +164,7 @@ st.markdown(
 
 
     /* ------------------------------------------------------
-       PANEL PRINCIPAL DE LA MESA
+       PANEL PRINCIPAL
        ------------------------------------------------------ */
 
     div[data-testid="stVerticalBlockBorderWrapper"] {
@@ -211,8 +204,8 @@ st.markdown(
         letter-spacing: 0.055rem;
         text-transform: uppercase;
 
-        margin-top: 0.55rem;
-        margin-bottom: 0.28rem;
+        margin-top: 0.60rem;
+        margin-bottom: 0.32rem;
 
         text-shadow:
             0 1px 3px rgba(0, 0, 0, 0.82);
@@ -220,7 +213,7 @@ st.markdown(
 
 
     /* ------------------------------------------------------
-       NOMBRE DE CADA POSICIÓN
+       NOMBRES DE LAS POSICIONES
        ------------------------------------------------------ */
 
     .card-position-label {
@@ -229,23 +222,42 @@ st.markdown(
 
         display: block;
 
+        width: 100%;
+
         color: #ffffff !important;
 
         font-size: 0.72rem;
         font-weight: 750;
+        line-height: 1.2;
 
         text-align: center;
 
-        margin-top: 0.12rem;
-        margin-bottom: 0.30rem;
+        /*
+        El padding inferior crea una separación real
+        entre el título y el naipe.
+        */
+        margin: 0;
+        padding-top: 0.08rem;
+        padding-bottom: 0.52rem;
 
         text-shadow:
-            0 1px 3px rgba(0, 0, 0, 0.90);
+            0 1px 3px rgba(0, 0, 0, 0.95);
+    }
+
+
+    /* El contenedor Markdown de la etiqueta no debe
+       tener márgenes negativos */
+    div[data-testid="stMarkdownContainer"]:has(
+        .card-position-label
+    ) {
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
     }
 
 
     /* ------------------------------------------------------
-       CARTA FÍSICA QUE ABRE LA BARAJA
+       CARTAS FÍSICAS
        ------------------------------------------------------ */
 
     div[data-testid="stPopover"] > button {
@@ -284,7 +296,7 @@ st.markdown(
     }
 
 
-    /* Línea interior de la carta */
+    /* Marco interior del naipe */
     div[data-testid="stPopover"] > button::after {
         content: "";
 
@@ -304,10 +316,32 @@ st.markdown(
     }
 
 
-    /* Texto negro de picas y tréboles */
-    div[data-testid="stPopover"] > button p {
-        position: relative;
-        z-index: 2;
+    /* Contenedor del texto de la carta */
+    div[data-testid="stPopover"] > button
+    [data-testid="stMarkdownContainer"] {
+        position: relative !important;
+        z-index: 5 !important;
+
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        width: 100% !important;
+        height: 100% !important;
+
+        opacity: 1 !important;
+    }
+
+
+    /*
+    Texto normal utilizado por picas y tréboles.
+    Se fuerza color oscuro para que no herede el blanco
+    general de la página.
+    */
+    div[data-testid="stPopover"] > button
+    [data-testid="stMarkdownContainer"] p {
+        position: relative !important;
+        z-index: 6 !important;
 
         color: #151915 !important;
 
@@ -316,17 +350,25 @@ st.markdown(
         line-height: 1 !important;
 
         margin: 0 !important;
+
+        opacity: 1 !important;
     }
 
 
-    /* Texto coloreado de corazones y diamantes */
-    div[data-testid="stPopover"] > button span {
-        position: relative;
-        z-index: 2;
+    /*
+    Texto coloreado de corazones y diamantes.
+    Streamlit introduce el color dentro de un span.
+    */
+    div[data-testid="stPopover"] > button
+    [data-testid="stMarkdownContainer"] span {
+        position: relative !important;
+        z-index: 6 !important;
 
         font-size: 1.68rem !important;
         font-weight: 850 !important;
         line-height: 1 !important;
+
+        opacity: 1 !important;
     }
 
 
@@ -342,7 +384,7 @@ st.markdown(
 
 
     /* ------------------------------------------------------
-       CONTENIDO DE LA BARAJA DESPLEGADA
+       BARAJA DESPLEGADA
        ------------------------------------------------------ */
 
     .picker-title {
@@ -371,7 +413,7 @@ st.markdown(
     }
 
 
-    /* Botones individuales de la baraja */
+    /* Botones individuales dentro de la baraja */
     div[data-testid="stPopoverBody"] button {
         min-height: 2.30rem !important;
 
@@ -390,17 +432,26 @@ st.markdown(
         font-weight: 800 !important;
     }
 
+
+    /* Picas y tréboles dentro de la baraja */
     div[data-testid="stPopoverBody"] button p {
         color: #121712 !important;
 
         font-size: 0.88rem !important;
         font-weight: 800 !important;
+
+        opacity: 1 !important;
     }
 
+
+    /* Corazones y diamantes dentro de la baraja */
     div[data-testid="stPopoverBody"] button span {
         font-size: 0.88rem !important;
         font-weight: 800 !important;
+
+        opacity: 1 !important;
     }
+
 
     div[data-testid="stPopoverBody"] button:hover {
         background-color: #fff8da !important;
@@ -408,7 +459,6 @@ st.markdown(
     }
 
 
-    /* Botones desactivados */
     div[data-testid="stPopoverBody"] button:disabled {
         background-color: #aeb4b0 !important;
         color: #6a6e6b !important;
@@ -418,7 +468,7 @@ st.markdown(
 
 
     /* ------------------------------------------------------
-       ETIQUETAS DE JUGADORES Y SIMULACIONES
+       ETIQUETAS DE CONTROLES
        ------------------------------------------------------ */
 
     [data-testid="stWidgetLabel"],
@@ -434,7 +484,7 @@ st.markdown(
 
 
     /* ------------------------------------------------------
-       SELECTOR NUMÉRICO DE JUGADORES
+       SELECTOR DE JUGADORES
        ------------------------------------------------------ */
 
     [data-testid="stNumberInput"] input {
@@ -553,7 +603,7 @@ st.markdown(
 
 
     /* ------------------------------------------------------
-       TARJETAS DE PROBABILIDADES
+       TARJETAS DE RESULTADOS
        ------------------------------------------------------ */
 
     .results-grid {
@@ -629,7 +679,7 @@ st.markdown(
 
 
     /* ------------------------------------------------------
-       TEXTOS INFERIORES
+       PIE DE PÁGINA
        ------------------------------------------------------ */
 
     [data-testid="stCaptionContainer"] p {
@@ -688,7 +738,7 @@ st.markdown(
 
 
     /* ------------------------------------------------------
-       VERSIÓN PARA MÓVIL
+       VERSIÓN MÓVIL
        ------------------------------------------------------ */
 
     @media screen and (max-width: 640px) {
@@ -704,7 +754,7 @@ st.markdown(
         }
 
         div[data-testid="stVerticalBlock"] {
-            gap: 0.22rem;
+            gap: 0.23rem;
         }
 
         .brand-header {
@@ -727,19 +777,35 @@ st.markdown(
             font-size: 0.74rem;
 
             margin-top: 0.45rem;
-            margin-bottom: 0.18rem;
+            margin-bottom: 0.20rem;
         }
 
         .card-position-label {
+            position: relative !important;
+            z-index: 20 !important;
+
+            display: block !important;
+
+            width: 100% !important;
+
             color: #ffffff !important;
 
             font-size: 0.58rem !important;
             font-weight: 750 !important;
+            line-height: 1.15 !important;
 
-            margin-bottom: 0.24rem !important;
+            text-align: center !important;
+
+            margin: 0 !important;
+
+            padding-top: 0.04rem !important;
+            padding-bottom: 0.40rem !important;
+
+            text-shadow:
+                0 1px 3px rgba(0, 0, 0, 0.95) !important;
         }
 
-        /* Cartas adaptadas a pantalla pequeña */
+        /* Cartas adaptadas a móvil */
         div[data-testid="stPopover"] > button {
             min-height: 4.60rem !important;
 
@@ -748,9 +814,22 @@ st.markdown(
             border-radius: 7px !important;
         }
 
-        div[data-testid="stPopover"] > button p,
-        div[data-testid="stPopover"] > button span {
+        /* Picas y tréboles */
+        div[data-testid="stPopover"] > button
+        [data-testid="stMarkdownContainer"] p {
+            color: #151915 !important;
+
             font-size: 1.08rem !important;
+
+            opacity: 1 !important;
+        }
+
+        /* Corazones y diamantes */
+        div[data-testid="stPopover"] > button
+        [data-testid="stMarkdownContainer"] span {
+            font-size: 1.08rem !important;
+
+            opacity: 1 !important;
         }
 
         div[data-testid="stPopoverBody"] button {
@@ -849,17 +928,13 @@ if JOKER_IMAGE:
 # 5. BARAJA Y EVALUADOR
 # ============================================================
 
-# Orden interno utilizado por Treys.
+# Orden interno de los valores.
 RANKS = "23456789TJQKA"
 
-# Orden de presentación dentro de la baraja visual.
+# Orden visual dentro del selector.
 DISPLAY_RANKS = "AKQJT98765432"
 
-# Palos:
-# s = picas
-# h = corazones
-# d = diamantes
-# c = tréboles
+# Palos.
 SUITS = "shdc"
 
 EVALUATOR = Evaluator()
@@ -881,7 +956,7 @@ FULL_DECK = create_deck()
 
 
 # ============================================================
-# 6. NOMBRES VISUALES DE LAS CARTAS
+# 6. NOMBRES VISUALES
 # ============================================================
 
 RANK_NAMES = {
@@ -919,9 +994,7 @@ SUIT_NAMES = {
 
 def card_visual_name(card):
     """
-    Devuelve el texto normal de una carta.
-
-    Se utiliza principalmente en los resúmenes.
+    Texto normal utilizado en el resumen de la mano.
     """
 
     if card is None:
@@ -935,10 +1008,10 @@ def card_visual_name(card):
 
 def card_picker_label(card):
     """
-    Genera la etiqueta visual de una carta.
+    Etiqueta utilizada dentro de los naipes.
 
-    Corazones y diamantes se muestran en rojo.
-    Picas y tréboles se muestran en negro.
+    Corazones y diamantes aparecen en rojo.
+    Picas y tréboles utilizan texto normal oscuro.
     """
 
     if card is None:
@@ -947,11 +1020,12 @@ def card_picker_label(card):
     rank = RANK_NAMES[card[0]]
     suit = SUIT_SYMBOLS[card[1]]
 
-    # Corazones y diamantes.
+    # Corazones y diamantes en rojo.
     if card[1] in ("h", "d"):
         return f":red[{rank} {suit}]"
 
-    # Picas y tréboles.
+    # Picas y tréboles como texto normal.
+    # El CSS fuerza este texto a color oscuro.
     return f"{rank} {suit}"
 
 
@@ -985,7 +1059,6 @@ DEFAULT_STATE = {
 }
 
 
-# Inicializamos las variables si todavía no existen.
 for state_key, default_value in DEFAULT_STATE.items():
 
     if state_key not in st.session_state:
@@ -994,7 +1067,7 @@ for state_key, default_value in DEFAULT_STATE.items():
 
 def clear_result():
     """
-    Elimina el resultado anterior cuando cambia la situación.
+    Elimina el resultado anterior cuando cambia la mano.
     """
 
     st.session_state["calculation_result"] = None
@@ -1003,7 +1076,7 @@ def clear_result():
 
 def select_card(slot_key, card):
     """
-    Guarda una carta en una posición concreta.
+    Guarda una carta dentro de una posición concreta.
     """
 
     st.session_state[slot_key] = card
@@ -1013,7 +1086,7 @@ def select_card(slot_key, card):
 
 def reset_hand():
     """
-    Restaura todos los controles a sus valores iniciales.
+    Restaura todos los valores iniciales.
     """
 
     for state_key, default_value in DEFAULT_STATE.items():
@@ -1022,7 +1095,7 @@ def reset_hand():
 
 def used_cards_except(current_slot):
     """
-    Devuelve las cartas utilizadas en el resto de posiciones.
+    Obtiene las cartas utilizadas en el resto de posiciones.
     """
 
     return {
@@ -1036,7 +1109,7 @@ def used_cards_except(current_slot):
 
 
 # ============================================================
-# 8. SELECTOR VISUAL DIRECTO DE CARTAS
+# 8. SELECTOR VISUAL DE CARTAS
 # ============================================================
 
 def card_picker(
@@ -1045,21 +1118,18 @@ def card_picker(
     allow_empty=False
 ):
     """
-    Muestra una carta como botón físico.
+    Muestra un naipe interactivo.
 
-    Al pulsar la carta se abre la baraja completa,
-    organizada por palos.
+    Al pulsar el naipe se abre la baraja completa.
     """
 
     selected_card = st.session_state[slot_key]
 
-    # Etiqueta que se mostrará en la carta física.
     trigger_label = card_picker_label(
         selected_card
     )
 
-    # Nombre de la posición:
-    # Carta 1, Flop 1, Turn, etc.
+    # Nombre de la posición.
     st.markdown(
         (
             '<div class="card-position-label">'
@@ -1069,7 +1139,7 @@ def card_picker(
         unsafe_allow_html=True
     )
 
-    # El popover se abre al tocar la carta.
+    # Carta física que abre la baraja.
     with st.popover(
         trigger_label,
         use_container_width=True,
@@ -1085,7 +1155,7 @@ def card_picker(
             unsafe_allow_html=True
         )
 
-        # Las cartas comunitarias pueden vaciarse.
+        # Flop, turn y river pueden quedar vacíos.
         if allow_empty:
 
             st.button(
@@ -1096,12 +1166,11 @@ def card_picker(
                 args=(slot_key, None)
             )
 
-        # Cartas que ya están siendo utilizadas.
         unavailable_cards = used_cards_except(
             slot_key
         )
 
-        # Mostramos los cuatro palos.
+        # Mostramos la baraja organizada por palos.
         for suit in SUITS:
 
             st.markdown(
@@ -1113,13 +1182,12 @@ def card_picker(
                 unsafe_allow_html=True
             )
 
-            # Cartas de este palo.
             suit_cards = [
                 rank + suit
                 for rank in DISPLAY_RANKS
             ]
 
-            # Primera fila: 7 cartas.
+            # Primera fila del palo.
             first_row = suit_cards[:7]
             first_columns = st.columns(7)
 
@@ -1141,7 +1209,7 @@ def card_picker(
                         args=(slot_key, card)
                     )
 
-            # Segunda fila: 6 cartas.
+            # Segunda fila del palo.
             second_row = suit_cards[7:]
             second_columns = st.columns(6)
 
@@ -1172,7 +1240,7 @@ def card_picker(
 
 
 # ============================================================
-# 9. VALIDACIÓN DE LA MANO
+# 9. VALIDACIÓN
 # ============================================================
 
 def validate_inputs(
@@ -1181,7 +1249,7 @@ def validate_inputs(
     num_players
 ):
     """
-    Comprueba cartas, mesa y jugadores.
+    Comprueba cartas, mesa y número de jugadores.
     """
 
     if len(hero_cards) != 2:
@@ -1194,8 +1262,6 @@ def validate_inputs(
             "Tus dos cartas deben estar seleccionadas."
         )
 
-    # La mesa puede tener:
-    # 0 cartas, 3 cartas, 4 cartas o 5 cartas.
     if len(board_cards) not in (0, 3, 4, 5):
         raise ValueError(
             "Debes introducir las tres cartas "
@@ -1207,9 +1273,7 @@ def validate_inputs(
             "Debe haber entre 2 y 10 jugadores activos."
         )
 
-    all_known_cards = (
-        hero_cards + board_cards
-    )
+    all_known_cards = hero_cards + board_cards
 
     if len(all_known_cards) != len(
         set(all_known_cards)
@@ -1230,10 +1294,7 @@ def hand_score(
     board_cards
 ):
     """
-    Evalúa una mano mediante Treys.
-
-    En Treys, una puntuación menor representa
-    una mano mejor.
+    Evalúa una mano utilizando Treys.
     """
 
     player_treys = [
@@ -1263,8 +1324,8 @@ def monte_carlo(
     simulations=10000
 ):
     """
-    Completa la mesa y reparte manos aleatorias
-    a todos los rivales activos.
+    Completa la mesa, reparte manos rivales
+    y calcula victoria, empate y derrota.
     """
 
     hero_cards, board_cards = validate_inputs(
@@ -1273,12 +1334,10 @@ def monte_carlo(
         num_players
     )
 
-    # Cartas conocidas.
     known_cards = set(
         hero_cards + board_cards
     )
 
-    # Cartas disponibles.
     available_cards = [
         card
         for card in FULL_DECK
@@ -1289,42 +1348,26 @@ def monte_carlo(
     ties = 0
     losses = 0
 
-    # Cartas comunitarias que faltan.
-    missing_board_cards = (
-        5 - len(board_cards)
-    )
+    missing_board_cards = 5 - len(board_cards)
+    number_of_villains = num_players - 1
 
-    # Número de rivales.
-    number_of_villains = (
-        num_players - 1
-    )
-
-    # Cartas necesarias en cada simulación.
     cards_needed = (
         missing_board_cards
         + number_of_villains * 2
     )
 
-    # Ejecutamos todas las simulaciones.
     for _ in range(simulations):
 
-        # Elegimos todas las cartas necesarias
-        # sin repetir.
         simulated_cards = random.sample(
             available_cards,
             cards_needed
         )
 
         position = 0
+        completed_board = board_cards.copy()
 
-        completed_board = (
-            board_cards.copy()
-        )
-
-        # Completamos la mesa.
-        for _ in range(
-            missing_board_cards
-        ):
+        # Completamos las cartas comunitarias pendientes.
+        for _ in range(missing_board_cards):
 
             completed_board.append(
                 simulated_cards[position]
@@ -1332,35 +1375,27 @@ def monte_carlo(
 
             position += 1
 
-        # Repartimos cartas a los rivales.
         villains = []
 
-        for _ in range(
-            number_of_villains
-        ):
+        # Repartimos dos cartas a cada rival.
+        for _ in range(number_of_villains):
 
             villain_hand = [
                 simulated_cards[position],
                 simulated_cards[position + 1]
             ]
 
-            villains.append(
-                villain_hand
-            )
+            villains.append(villain_hand)
 
             position += 2
 
-        # Evaluamos nuestra mano.
         hero_score = hand_score(
             hero_cards,
             completed_board
         )
 
-        all_scores = [
-            hero_score
-        ]
+        all_scores = [hero_score]
 
-        # Evaluamos las manos rivales.
         for villain_hand in villains:
 
             villain_score = hand_score(
@@ -1368,36 +1403,24 @@ def monte_carlo(
                 completed_board
             )
 
-            all_scores.append(
-                villain_score
-            )
+            all_scores.append(villain_score)
 
-        # La puntuación menor es la mejor.
-        best_score = min(
-            all_scores
-        )
+        best_score = min(all_scores)
 
-        # Alguien tiene una mano mejor.
         if hero_score != best_score:
 
             losses += 1
 
         else:
 
-            # Contamos cuántos jugadores
-            # comparten la mejor mano.
-            number_of_winners = (
-                all_scores.count(
-                    best_score
-                )
+            number_of_winners = all_scores.count(
+                best_score
             )
 
             if number_of_winners == 1:
-
                 wins += 1
 
             else:
-
                 ties += 1
 
     return {
@@ -1441,8 +1464,6 @@ st.markdown(
 # 13. PANEL PRINCIPAL
 # ============================================================
 
-# Utilizamos un contenedor nativo de Streamlit.
-# Esto permite envolver correctamente todos los controles.
 with st.container(border=True):
 
     # ========================================================
@@ -1458,9 +1479,7 @@ with st.container(border=True):
         unsafe_allow_html=True
     )
 
-    hero_column_1, hero_column_2 = (
-        st.columns(2)
-    )
+    hero_column_1, hero_column_2 = st.columns(2)
 
     with hero_column_1:
 
@@ -1529,9 +1548,7 @@ with st.container(border=True):
     with configuration_column_1:
 
         active_players = st.number_input(
-            label=(
-                "Jugadores activos, incluyéndote a ti"
-            ),
+            label="Jugadores activos, incluyéndote a ti",
             min_value=2,
             max_value=10,
             step=1,
@@ -1561,9 +1578,7 @@ with st.container(border=True):
     # BOTONES
     # ========================================================
 
-    calculate_column, reset_column = (
-        st.columns(2)
-    )
+    calculate_column, reset_column = st.columns(2)
 
     with calculate_column:
 
@@ -1603,8 +1618,8 @@ if calculate_button:
             st.session_state["river_card"]
         ]
 
-        # Comprobamos que las cartas se han añadido
-        # en el orden correcto.
+        # Validamos el orden:
+        # flop, turn y river.
         empty_position_found = False
 
         for card in board_positions:
@@ -1621,7 +1636,6 @@ if calculate_button:
                     "y finalmente el river."
                 )
 
-        # Quitamos las posiciones vacías.
         board_cards = [
             card
             for card in board_positions
@@ -1639,12 +1653,10 @@ if calculate_button:
                 simulations=simulations
             )
 
-        # Guardamos el resultado.
         st.session_state[
             "calculation_result"
         ] = result
 
-        # Guardamos la situación analizada.
         st.session_state[
             "calculation_summary"
         ] = {
@@ -1655,9 +1667,7 @@ if calculate_button:
 
     except ValueError as error:
 
-        st.error(
-            str(error)
-        )
+        st.error(str(error))
 
     except Exception as error:
 
@@ -1667,7 +1677,7 @@ if calculate_button:
 
 
 # ============================================================
-# 15. MOSTRAR LOS RESULTADOS
+# 15. MOSTRAR RESULTADOS
 # ============================================================
 
 result = st.session_state.get(
@@ -1681,13 +1691,11 @@ summary = st.session_state.get(
 
 if result and summary:
 
-    # Cartas propias en formato visual.
     hero_text = " ".join(
         card_visual_name(card)
         for card in summary["hero_cards"]
     )
 
-    # Mesa en formato visual.
     if summary["board_cards"]:
 
         board_text = " ".join(
@@ -1699,7 +1707,6 @@ if result and summary:
 
         board_text = "Antes del flop"
 
-    # Resumen de la situación.
     summary_html = (
         '<div class="hand-summary">'
 
@@ -1735,8 +1742,8 @@ if result and summary:
         unsafe_allow_html=True
     )
 
-    # Construimos las tarjetas en una única cadena.
-    # Esto evita que Streamlit muestre el HTML como texto.
+    # Una única cadena HTML evita que Streamlit
+    # muestre el código en pantalla.
     results_html = (
         '<div class="results-grid">'
 
