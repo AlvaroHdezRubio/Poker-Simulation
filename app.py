@@ -1,105 +1,398 @@
 # ============================================================
-# CALCULADORA DE PROBABILIDADES DE PÓKER
-# Aplicación creada con Streamlit
+# RAZA CHOPE POKAH
+# Calculadora de probabilidades de Texas Hold'em
 # ============================================================
 
-# random se utiliza para mezclar las cartas.
+import base64
 import random
 
-# Streamlit crea la interfaz visual.
+from pathlib import Path
+
 import streamlit as st
 
-# Treys evalúa las manos de Texas Hold'em.
 from treys import Card, Evaluator
 
 
 # ============================================================
-# 1. CONFIGURACIÓN DE LA PÁGINA
+# 1. CONFIGURACIÓN GENERAL
 # ============================================================
 
-# Esta instrucción configura la pestaña del navegador.
-# Debe aparecer antes de cualquier otro elemento de Streamlit.
 st.set_page_config(
-    page_title="Calculadora de póker",
-    page_icon="♠️",
+    page_title="Raza Chope Pokah",
+    page_icon="🃏",
     layout="centered"
 )
 
 
 # ============================================================
-# 2. VALORES Y PALOS DE LA BARAJA
+# 2. CARGAR LA IMAGEN LATERAL
 # ============================================================
 
-# Valores admitidos por Treys.
-#
-# T representa el 10.
-# J representa la jota.
-# Q representa la reina.
-# K representa el rey.
-# A representa el as.
+def load_image_as_base64(image_path):
+    """
+    Convierte una imagen del repositorio en un texto Base64.
+
+    Esto permite utilizar joker.png como imagen de fondo
+    dentro de los estilos de la aplicación.
+    """
+
+    path = Path(image_path)
+
+    # Si la imagen no existe, la aplicación seguirá funcionando.
+    if not path.exists():
+        return None
+
+    with path.open("rb") as image_file:
+
+        encoded_image = base64.b64encode(
+            image_file.read()
+        ).decode("utf-8")
+
+    return encoded_image
+
+
+# Buscamos joker.png en el mismo lugar que app.py.
+JOKER_IMAGE = load_image_as_base64("joker.png")
+
+
+# ============================================================
+# 3. ESTILOS VISUALES
+# ============================================================
+
+st.markdown(
+    """
+    <style>
+
+    /* Fondo general verde tipo tapete */
+    .stApp {
+        background:
+            radial-gradient(
+                circle at top left,
+                #176b45 0%,
+                #0d5638 35%,
+                #073b29 75%,
+                #052d20 100%
+            );
+        color: #f5f7f5;
+    }
+
+    /*
+    Colocamos el contenido delante de la imagen lateral.
+    */
+    .block-container {
+        position: relative;
+        z-index: 2;
+        max-width: 850px;
+        padding-top: 0.7rem;
+        padding-bottom: 1.2rem;
+    }
+
+    /* Título principal compacto */
+    .app-title {
+        color: #ffffff;
+        font-size: 2rem;
+        font-weight: 850;
+        line-height: 1.1;
+        margin: 0 0 0.7rem 0;
+        text-shadow:
+            0 2px 3px rgba(0, 0, 0, 0.65),
+            0 0 14px rgba(255, 183, 55, 0.22);
+    }
+
+    /* Títulos de sección compactos */
+    .section-title {
+        color: #ffffff;
+        font-size: 1.2rem;
+        font-weight: 750;
+        line-height: 1.2;
+        margin-top: 0.75rem;
+        margin-bottom: 0.25rem;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+    }
+
+    /* Reducimos espacios verticales */
+    div[data-testid="stVerticalBlock"] {
+        gap: 0.38rem;
+    }
+
+    /* Etiquetas de los controles */
+    div[data-testid="stWidgetLabel"] p {
+        color: #f4f8f5;
+        font-size: 0.86rem;
+        font-weight: 650;
+    }
+
+    /* Contenedor de los desplegables */
+    div[data-baseweb="select"] > div {
+        min-height: 2.55rem;
+        background-color: rgba(247, 249, 248, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        border-radius: 9px;
+    }
+
+    /* Texto de los desplegables */
+    div[data-baseweb="select"] span {
+        color: #17231d;
+    }
+
+    /* Reducimos márgenes de los desplegables */
+    div[data-testid="stSelectbox"] {
+        margin-bottom: 0;
+    }
+
+    /* Deslizador */
+    div[data-testid="stSlider"] p {
+        color: #ffffff;
+    }
+
+    /* Botones */
+    div[data-testid="stButton"] button {
+        min-height: 2.55rem;
+        border-radius: 9px;
+        font-weight: 750;
+    }
+
+    /* Botón principal */
+    div[data-testid="stButton"] button[kind="primary"] {
+        background-color: #e5a923;
+        color: #172016;
+        border: 1px solid #ffd46d;
+    }
+
+    div[data-testid="stButton"] button[kind="primary"]:hover {
+        background-color: #f2bd3e;
+        color: #101710;
+        border-color: #ffe69b;
+    }
+
+    /* Botón Nueva mano */
+    div[data-testid="stButton"] button[kind="secondary"] {
+        background-color: rgba(3, 42, 27, 0.82);
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.48);
+    }
+
+    div[data-testid="stButton"] button[kind="secondary"]:hover {
+        background-color: rgba(8, 76, 49, 0.95);
+        color: #ffffff;
+    }
+
+    /* Tarjetas de probabilidades */
+    div[data-testid="stMetric"] {
+        background-color: rgba(3, 40, 26, 0.76);
+        border: 1px solid rgba(255, 255, 255, 0.20);
+        border-radius: 10px;
+        padding: 0.55rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.20);
+    }
+
+    div[data-testid="stMetricLabel"] {
+        color: #dceae1;
+    }
+
+    div[data-testid="stMetricValue"] {
+        color: #ffffff;
+    }
+
+    /* Textos normales */
+    .stMarkdown,
+    [data-testid="stCaptionContainer"] {
+        color: #edf5f0;
+    }
+
+    /* Línea divisoria */
+    hr {
+        border-color: rgba(255, 255, 255, 0.20);
+        margin-top: 0.8rem;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Imagen fija que sale desde el lateral derecho */
+    .joker-background {
+        position: fixed;
+        z-index: 0;
+        pointer-events: none;
+
+        right: 0;
+        bottom: 0;
+
+        width: 430px;
+        height: 100vh;
+
+        background-position: right center;
+        background-repeat: no-repeat;
+        background-size: cover;
+
+        opacity: 0.42;
+
+        /*
+        La máscara elimina progresivamente la parte izquierda,
+        integrando la imagen con el fondo verde.
+        */
+        -webkit-mask-image:
+            linear-gradient(
+                to right,
+                transparent 0%,
+                rgba(0, 0, 0, 0.20) 18%,
+                black 52%
+            );
+
+        mask-image:
+            linear-gradient(
+                to right,
+                transparent 0%,
+                rgba(0, 0, 0, 0.20) 18%,
+                black 52%
+            );
+    }
+
+    /* Ajustes específicos para móvil */
+    @media (max-width: 640px) {
+
+        .block-container {
+            padding-top: 0.35rem;
+            padding-left: 0.60rem;
+            padding-right: 0.60rem;
+            padding-bottom: 0.8rem;
+        }
+
+        .app-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .section-title {
+            font-size: 1.02rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0.15rem;
+        }
+
+        div[data-testid="stVerticalBlock"] {
+            gap: 0.22rem;
+        }
+
+        div[data-testid="stWidgetLabel"] p {
+            font-size: 0.75rem;
+        }
+
+        div[data-baseweb="select"] > div {
+            min-height: 2.35rem;
+            border-radius: 8px;
+        }
+
+        div[data-testid="stSlider"] {
+            margin-top: -0.15rem;
+            margin-bottom: -0.15rem;
+        }
+
+        div[data-testid="stButton"] button {
+            min-height: 2.4rem;
+            font-size: 0.82rem;
+        }
+
+        /*
+        En teléfono mostramos una parte más pequeña del Joker
+        y bajamos mucho su intensidad para que no moleste.
+        */
+        .joker-background {
+            width: 190px;
+            height: 65vh;
+            right: -25px;
+            bottom: 0;
+            background-position: 69% center;
+            background-size: cover;
+            opacity: 0.14;
+
+            -webkit-mask-image:
+                linear-gradient(
+                    to right,
+                    transparent 0%,
+                    rgba(0, 0, 0, 0.15) 25%,
+                    black 65%
+                );
+
+            mask-image:
+                linear-gradient(
+                    to right,
+                    transparent 0%,
+                    rgba(0, 0, 0, 0.15) 25%,
+                    black 65%
+                );
+        }
+
+        /*
+        Las métricas ocupan menos espacio en móvil.
+        */
+        div[data-testid="stMetric"] {
+            padding: 0.4rem;
+        }
+
+        div[data-testid="stMetricLabel"] p {
+            font-size: 0.72rem;
+        }
+
+        div[data-testid="stMetricValue"] {
+            font-size: 1.15rem;
+        }
+    }
+
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
+# Añadimos la imagen solamente si joker.png existe.
+if JOKER_IMAGE:
+
+    st.markdown(
+        f"""
+        <div
+            class="joker-background"
+            style="
+                background-image:
+                    linear-gradient(
+                        to left,
+                        rgba(5, 45, 31, 0.03),
+                        rgba(5, 45, 31, 0.52)
+                    ),
+                    url('data:image/png;base64,{JOKER_IMAGE}');
+            "
+        ></div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+# ============================================================
+# 4. BARAJA Y EVALUADOR
+# ============================================================
+
 RANKS = "23456789TJQKA"
-
-
-# Palos admitidos por Treys.
-#
-# s = picas
-# h = corazones
-# d = diamantes
-# c = tréboles
 SUITS = "shdc"
 
-
-# Creamos el evaluador de manos una única vez.
 EVALUATOR = Evaluator()
 
 
-# ============================================================
-# 3. CREAR LA BARAJA
-# ============================================================
-
 def create_deck():
     """
-    Crea una baraja completa de 52 cartas.
-
-    Ejemplos:
-        Ah = as de corazones
-        Ks = rey de picas
-        Td = diez de diamantes
-        7c = siete de tréboles
+    Crea las 52 cartas de la baraja.
     """
 
-    deck = []
-
-    # Recorremos todos los valores.
-    for rank in RANKS:
-
-        # Recorremos los cuatro palos.
-        for suit in SUITS:
-
-            # Unimos valor y palo.
-            deck.append(rank + suit)
-
-    return deck
+    return [
+        rank + suit
+        for rank in RANKS
+        for suit in SUITS
+    ]
 
 
-# Creamos la baraja completa.
 FULL_DECK = create_deck()
 
 
 # ============================================================
-# 4. NOMBRES VISUALES DE LAS CARTAS
+# 5. NOMBRES VISUALES
 # ============================================================
 
-# Traducción de los palos internos a símbolos.
-SUIT_SYMBOLS = {
-    "s": "♠",
-    "h": "♥",
-    "d": "♦",
-    "c": "♣"
-}
-
-
-# Traducción especial del 10.
 RANK_NAMES = {
     "2": "2",
     "3": "3",
@@ -117,17 +410,19 @@ RANK_NAMES = {
 }
 
 
+SUIT_SYMBOLS = {
+    "s": "♠",
+    "h": "♥",
+    "d": "♦",
+    "c": "♣"
+}
+
+
 def card_visual_name(card):
     """
-    Convierte el formato interno en un formato visual.
-
-    Ejemplos:
-        Ah se muestra como A♥
-        Ks se muestra como K♠
-        Td se muestra como 10♦
+    Convierte Ah en A♥, Ks en K♠, etc.
     """
 
-    # None representa una posición sin carta.
     if card is None:
         return "Sin carta"
 
@@ -138,48 +433,37 @@ def card_visual_name(card):
 
 
 # ============================================================
-# 5. VALIDAR LOS DATOS
+# 6. VALIDAR LOS DATOS
 # ============================================================
 
 def validate_inputs(hero_cards, board_cards, num_players):
     """
-    Comprueba que las cartas y los jugadores sean válidos.
+    Comprueba cartas repetidas, mesa y jugadores.
     """
 
-    # Debemos tener exactamente dos cartas propias.
     if len(hero_cards) != 2:
         raise ValueError(
-            "Debes seleccionar exactamente dos cartas propias."
+            "Debes seleccionar exactamente dos cartas."
         )
 
-    # La mesa solamente puede tener:
-    #
-    # 0 cartas antes del flop.
-    # 3 cartas en el flop.
-    # 4 cartas después del turn.
-    # 5 cartas después del river.
     if len(board_cards) not in (0, 3, 4, 5):
         raise ValueError(
             "Debes introducir las tres cartas del flop juntas."
         )
 
-    # Comprobamos el número de jugadores activos.
     if num_players < 2 or num_players > 10:
         raise ValueError(
             "Debe haber entre 2 y 10 jugadores activos."
         )
 
-    # Juntamos todas las cartas conocidas.
     all_known_cards = hero_cards + board_cards
 
-    # Comprobamos que ninguna carta esté repetida.
     if len(all_known_cards) != len(set(all_known_cards)):
         raise ValueError(
             "Hay cartas repetidas. "
-            "Una misma carta no puede aparecer dos veces."
+            "Una carta no puede aparecer dos veces."
         )
 
-    # Comprobamos que todas las cartas pertenezcan a la baraja.
     for card in all_known_cards:
 
         if card not in FULL_DECK:
@@ -191,31 +475,26 @@ def validate_inputs(hero_cards, board_cards, num_players):
 
 
 # ============================================================
-# 6. EVALUAR UNA MANO
+# 7. EVALUAR UNA MANO
 # ============================================================
 
 def hand_score(player_cards, board_cards):
     """
-    Calcula la puntuación de una mano con Treys.
+    Evalúa una mano mediante Treys.
 
-    En Treys:
-        una puntuación más baja representa una mano mejor.
+    En Treys, una puntuación menor representa una mano mejor.
     """
 
-    # Convertimos las cartas del jugador al formato Treys.
     player_treys = [
         Card.new(card)
         for card in player_cards
     ]
 
-    # Convertimos las cartas de la mesa.
     board_treys = [
         Card.new(card)
         for card in board_cards
     ]
 
-    # Evaluamos las siete cartas disponibles:
-    # dos del jugador y cinco de la mesa.
     return EVALUATOR.evaluate(
         board_treys,
         player_treys
@@ -223,7 +502,7 @@ def hand_score(player_cards, board_cards):
 
 
 # ============================================================
-# 7. SIMULACIÓN MONTE CARLO
+# 8. SIMULACIÓN MONTE CARLO
 # ============================================================
 
 def monte_carlo(
@@ -233,67 +512,50 @@ def monte_carlo(
     simulations=10000
 ):
     """
-    Simula miles de partidas posibles.
-
-    En cada simulación:
-
-        1. Elimina las cartas conocidas.
-        2. Completa las cartas que faltan en la mesa.
-        3. Reparte dos cartas a cada rival.
-        4. Evalúa todas las manos.
-        5. Cuenta victoria, empate o derrota.
+    Simula partidas completando la mesa y repartiendo
+    manos aleatorias a todos los rivales activos.
     """
 
-    # Validamos los datos antes de comenzar.
     hero_cards, board_cards = validate_inputs(
         hero_cards,
         board_cards,
         num_players
     )
 
-    # Cartas conocidas que no pueden volver a repartirse.
-    known_cards = set(hero_cards + board_cards)
+    known_cards = set(
+        hero_cards + board_cards
+    )
 
-    # Creamos una baraja base sin las cartas conocidas.
     available_cards = [
         card
         for card in FULL_DECK
         if card not in known_cards
     ]
 
-    # Contadores de resultados.
     wins = 0
     ties = 0
     losses = 0
 
-    # Calculamos cuántas cartas faltan en la mesa.
     missing_board_cards = 5 - len(board_cards)
-
-    # Calculamos el número de rivales.
     number_of_villains = num_players - 1
 
-    # Calculamos cuántas cartas necesitamos en cada simulación.
     cards_needed = (
         missing_board_cards
         + number_of_villains * 2
     )
 
-    # Repetimos la simulación el número de veces indicado.
     for _ in range(simulations):
 
-        # Elegimos cartas aleatorias sin repetir.
+        # Elegimos todas las cartas necesarias sin repetir.
         simulated_cards = random.sample(
             available_cards,
             cards_needed
         )
 
-        # Posición actual dentro de las cartas simuladas.
         position = 0
-
-        # Copiamos la mesa visible.
         completed_board = board_cards.copy()
 
-        # Añadimos las cartas comunitarias que faltan.
+        # Completamos turn y river si todavía no han salido.
         for _ in range(missing_board_cards):
 
             completed_board.append(
@@ -302,7 +564,6 @@ def monte_carlo(
 
             position += 1
 
-        # Guardamos las manos de los rivales.
         villains = []
 
         # Repartimos dos cartas a cada rival.
@@ -317,16 +578,13 @@ def monte_carlo(
 
             position += 2
 
-        # Evaluamos nuestra mano.
         hero_score = hand_score(
             hero_cards,
             completed_board
         )
 
-        # Lista que contendrá todas las puntuaciones.
         all_scores = [hero_score]
 
-        # Evaluamos a cada rival.
         for villain_hand in villains:
 
             villain_score = hand_score(
@@ -336,96 +594,85 @@ def monte_carlo(
 
             all_scores.append(villain_score)
 
-        # La puntuación más baja es la mejor.
         best_score = min(all_scores)
 
-        # Si nuestra puntuación no es la mejor, perdemos.
         if hero_score != best_score:
 
             losses += 1
 
         else:
 
-            # Contamos cuántos jugadores tienen la mejor mano.
-            number_of_winners = all_scores.count(best_score)
+            number_of_winners = all_scores.count(
+                best_score
+            )
 
-            # Si solo somos nosotros, ganamos.
             if number_of_winners == 1:
-
                 wins += 1
 
-            # Si hay más jugadores con la misma mano, empatamos.
             else:
-
                 ties += 1
 
-    # Convertimos los contadores en porcentajes.
-    win_percentage = wins / simulations * 100
-    tie_percentage = ties / simulations * 100
-    loss_percentage = losses / simulations * 100
-
     return {
-        "victoria": round(win_percentage, 2),
-        "empate": round(tie_percentage, 2),
-        "derrota": round(loss_percentage, 2),
-        "simulaciones": simulations,
-        "jugadores": num_players,
-        "rivales": number_of_villains
+        "victoria": round(
+            wins / simulations * 100,
+            2
+        ),
+        "empate": round(
+            ties / simulations * 100,
+            2
+        ),
+        "derrota": round(
+            losses / simulations * 100,
+            2
+        ),
+        "simulaciones": simulations
     }
 
 
 # ============================================================
-# 8. FUNCIÓN PARA REINICIAR LA MANO
+# 9. REINICIAR LA MANO
 # ============================================================
 
 def reset_hand():
     """
-    Restaura las cartas y los jugadores a sus valores iniciales.
+    Vuelve a una mano vacía.
     """
 
-    # Restauramos nuestras cartas.
     st.session_state["hero_card_1"] = "Kh"
     st.session_state["hero_card_2"] = "Ks"
 
-    # Vaciamos las cartas comunitarias.
     st.session_state["flop_card_1"] = None
     st.session_state["flop_card_2"] = None
     st.session_state["flop_card_3"] = None
     st.session_state["turn_card"] = None
     st.session_state["river_card"] = None
 
-    # Restauramos el número de jugadores.
     st.session_state["active_players"] = 6
-
-    # Restauramos las simulaciones.
     st.session_state["simulations"] = 25000
 
 
 # ============================================================
-# 9. TÍTULO DE LA APLICACIÓN
+# 10. TÍTULO
 # ============================================================
 
-st.title("♠️ Calculadora de póker")
-
-st.caption(
-    "Texas Hold'em · Simulación Monte Carlo"
-)
-
-st.write(
-    "Selecciona tus cartas, añade las cartas comunitarias "
-    "que hayan salido y especifica cuántos jugadores "
-    "continúan activos."
+st.markdown(
+    '<div class="app-title">🃏 Raza Chope Pokah</div>',
+    unsafe_allow_html=True
 )
 
 
 # ============================================================
-# 10. SELECTORES DE NUESTRAS CARTAS
+# 11. TUS CARTAS
 # ============================================================
 
-st.subheader("Tus cartas")
+st.markdown(
+    '<div class="section-title">Tus cartas</div>',
+    unsafe_allow_html=True
+)
 
-# Creamos dos columnas para mostrar las cartas juntas.
+
 hero_column_1, hero_column_2 = st.columns(2)
+
 
 with hero_column_1:
 
@@ -436,6 +683,7 @@ with hero_column_1:
         format_func=card_visual_name,
         key="hero_card_1"
     )
+
 
 with hero_column_2:
 
@@ -449,17 +697,20 @@ with hero_column_2:
 
 
 # ============================================================
-# 11. SELECTORES DE LAS CARTAS COMUNITARIAS
+# 12. CARTAS COMUNITARIAS
 # ============================================================
 
-st.subheader("Cartas comunitarias")
+st.markdown(
+    '<div class="section-title">Cartas comunitarias</div>',
+    unsafe_allow_html=True
+)
 
-# Añadimos None para permitir posiciones sin carta.
+
 BOARD_OPTIONS = [None] + FULL_DECK
 
 
-# Las tres cartas del flop aparecen en tres columnas.
 flop_column_1, flop_column_2, flop_column_3 = st.columns(3)
+
 
 with flop_column_1:
 
@@ -470,6 +721,7 @@ with flop_column_1:
         key="flop_card_1"
     )
 
+
 with flop_column_2:
 
     flop_card_2 = st.selectbox(
@@ -478,6 +730,7 @@ with flop_column_2:
         format_func=card_visual_name,
         key="flop_card_2"
     )
+
 
 with flop_column_3:
 
@@ -489,8 +742,8 @@ with flop_column_3:
     )
 
 
-# Turn y river aparecen juntos.
 turn_column, river_column = st.columns(2)
+
 
 with turn_column:
 
@@ -500,6 +753,7 @@ with turn_column:
         format_func=card_visual_name,
         key="turn_card"
     )
+
 
 with river_column:
 
@@ -512,10 +766,8 @@ with river_column:
 
 
 # ============================================================
-# 12. CONFIGURACIÓN DE LA SIMULACIÓN
+# 13. JUGADORES Y SIMULACIONES
 # ============================================================
-
-st.subheader("Configuración")
 
 active_players = st.slider(
     label="Jugadores activos, incluyéndote a ti",
@@ -528,7 +780,7 @@ active_players = st.slider(
 
 
 simulations = st.selectbox(
-    label="Número de simulaciones",
+    label="Simulaciones",
     options=[
         10000,
         25000,
@@ -536,24 +788,28 @@ simulations = st.selectbox(
         100000
     ],
     index=1,
-    format_func=lambda value: f"{value:,}".replace(",", "."),
+    format_func=lambda value: (
+        f"{value:,}".replace(",", ".")
+    ),
     key="simulations"
 )
 
 
 # ============================================================
-# 13. BOTONES
+# 14. BOTONES
 # ============================================================
 
 calculate_column, reset_column = st.columns(2)
 
+
 with calculate_column:
 
     calculate_button = st.button(
-        "Calcular probabilidades",
+        "Calcular",
         type="primary",
         use_container_width=True
     )
+
 
 with reset_column:
 
@@ -565,20 +821,28 @@ with reset_column:
 
 
 # ============================================================
-# 14. EJECUTAR EL CÁLCULO
+# 15. CALCULAR PROBABILIDADES
+# ================================
+# ============================================================
+# 15. CALCULAR PROBABILIDADES
 # ============================================================
 
+# Este bloque solamente se ejecuta cuando pulsamos
+# el botón "Calcular".
 if calculate_button:
 
     try:
 
-        # Recogemos nuestras cartas.
+        # Guardamos nuestras dos cartas en una lista.
         hero_cards = [
             hero_card_1,
             hero_card_2
         ]
 
-        # Recogemos las cinco posiciones de la mesa.
+        # Guardamos todas las posiciones posibles de la mesa.
+        #
+        # Algunas posiciones pueden contener None,
+        # que significa "Sin carta".
         board_positions = [
             flop_card_1,
             flop_card_2,
@@ -587,31 +851,55 @@ if calculate_button:
             river_card
         ]
 
-        # Comprobamos que no haya cartas después
-        # de una posición vacía.
+        # ----------------------------------------------------
+        # COMPROBAR EL ORDEN DE LAS CARTAS COMUNITARIAS
+        # ----------------------------------------------------
+
+        # Utilizamos esta variable para recordar si hemos
+        # encontrado una posición vacía.
         empty_position_found = False
 
+        # Recorremos las cinco posiciones en orden:
+        # flop 1, flop 2, flop 3, turn y river.
         for card in board_positions:
 
+            # Si la posición está vacía, guardamos esa información.
             if card is None:
+
                 empty_position_found = True
 
+            # Si encontramos una carta después de una posición
+            # vacía, las cartas no se han añadido en orden.
             elif empty_position_found:
+
                 raise ValueError(
-                    "Las cartas comunitarias deben añadirse "
-                    "en orden: flop, turn y river."
+                    "Añade las cartas comunitarias en orden: "
+                    "primero las tres cartas del flop, "
+                    "después el turn y finalmente el river."
                 )
 
-        # Eliminamos las posiciones sin carta.
+        # Eliminamos las posiciones que contienen None.
+        #
+        # El resultado será:
+        #
+        # [] antes del flop.
+        # [carta, carta, carta] en el flop.
+        # [carta, carta, carta, carta] en el turn.
+        # [carta, carta, carta, carta, carta] en el river.
         board_cards = [
             card
             for card in board_positions
             if card is not None
         ]
 
-        # Mostramos un indicador mientras se calcula.
+        # ----------------------------------------------------
+        # EJECUTAR LA SIMULACIÓN
+        # ----------------------------------------------------
+
+        # Mientras se realizan los cálculos, Streamlit
+        # mostrará un indicador visual.
         with st.spinner(
-            "Simulando posibles partidas..."
+            "Simulando partidas..."
         ):
 
             result = monte_carlo(
@@ -621,19 +909,21 @@ if calculate_button:
                 simulations=simulations
             )
 
-        # Mostramos un mensaje de finalización.
-        st.success(
-            "Simulación completada correctamente."
-        )
+        # ----------------------------------------------------
+        # PREPARAR LOS TEXTOS VISUALES
+        # ----------------------------------------------------
 
-        # Mostramos la situación analizada.
-        st.subheader("Situación analizada")
-
+        # Convertimos nuestras cartas a formato visual.
+        #
+        # Por ejemplo:
+        # ["Kh", "Ks"] se convierte en "K♥ K♠".
         hero_text = " ".join(
             card_visual_name(card)
             for card in hero_cards
         )
 
+        # Si ya hay cartas comunitarias, las convertimos
+        # también a su formato visual.
         if board_cards:
 
             board_text = " ".join(
@@ -641,18 +931,46 @@ if calculate_button:
                 for card in board_cards
             )
 
+        # Si todavía no hay cartas comunitarias,
+        # indicamos que estamos antes del flop.
         else:
 
             board_text = "Antes del flop"
 
-        st.write("**Tus cartas:**", hero_text)
-        st.write("**Mesa:**", board_text)
-        st.write("**Jugadores activos:**", active_players)
-        st.write("**Rivales activos:**", active_players - 1)
+        # ----------------------------------------------------
+        # MOSTRAR LA SITUACIÓN ANALIZADA
+        # ----------------------------------------------------
 
-        # Mostramos los resultados en tres columnas.
-        st.subheader("Probabilidades")
+        st.markdown(
+            f"""
+            <div class="hand-summary">
+                <div>
+                    <strong>Tus cartas:</strong> {hero_text}
+                </div>
+                <div>
+                    <strong>Mesa:</strong> {board_text}
+                </div>
+                <div>
+                    <strong>Jugadores activos:</strong>
+                    {active_players}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
+        # Título compacto de probabilidades.
+        st.markdown(
+            '<div class="section-title">Probabilidades</div>',
+            unsafe_allow_html=True
+        )
+
+        # ----------------------------------------------------
+        # MOSTRAR LOS TRES PORCENTAJES
+        # ----------------------------------------------------
+
+        # Creamos tres columnas:
+        # victoria, empate y derrota.
         win_column, tie_column, loss_column = st.columns(3)
 
         with win_column:
@@ -676,50 +994,86 @@ if calculate_button:
                 value=f"{result['derrota']} %"
             )
 
-        # Añadimos barras visuales.
-        st.write("**Victoria**")
+        # ----------------------------------------------------
+        # MOSTRAR BARRAS DE PROGRESO
+        # ----------------------------------------------------
+
+        st.markdown(
+            '<div class="probability-label">Victoria</div>',
+            unsafe_allow_html=True
+        )
+
+        # st.progress necesita un valor entre 0 y 1.
+        # Por eso dividimos el porcentaje entre 100.
         st.progress(
             result["victoria"] / 100
         )
 
-        st.write("**Empate**")
+        st.markdown(
+            '<div class="probability-label">Empate</div>',
+            unsafe_allow_html=True
+        )
+
         st.progress(
             result["empate"] / 100
         )
 
-        st.write("**Derrota**")
+        st.markdown(
+            '<div class="probability-label">Derrota</div>',
+            unsafe_allow_html=True
+        )
+
         st.progress(
             result["derrota"] / 100
         )
 
-        # Información de la simulación.
-        st.caption(
-            f"Resultado basado en "
-            f"{result['simulaciones']:,} simulaciones."
+        # Formateamos el número de simulaciones.
+        #
+        # Por ejemplo:
+        # 25000 se mostrará como 25.000.
+        simulation_text = (
+            f"{result['simulaciones']:,}"
             .replace(",", ".")
         )
 
+        st.caption(
+            f"Resultado basado en "
+            f"{simulation_text} simulaciones."
+        )
+
+    # --------------------------------------------------------
+    # ERRORES DE LOS DATOS INTRODUCIDOS
+    # --------------------------------------------------------
+
     except ValueError as error:
 
-        # Mostramos errores de cartas repetidas,
-        # flop incompleto u orden incorrecto.
-        st.error(str(error))
+        # Aquí aparecerán errores como:
+        #
+        # Carta repetida.
+        # Flop incompleto.
+        # Turn introducido antes del flop.
+        st.error(
+            str(error)
+        )
+
+    # --------------------------------------------------------
+    # ERRORES INESPERADOS
+    # --------------------------------------------------------
 
     except Exception as error:
 
-        # Mostramos otros errores inesperados.
         st.error(
             f"Se ha producido un error inesperado: {error}"
         )
 
 
 # ============================================================
-# 15. INFORMACIÓN FINAL
+# 16. INFORMACIÓN FINAL
 # ============================================================
 
 st.divider()
 
 st.caption(
-    "Los rivales se simulan con manos aleatorias entre "
-    "todas las combinaciones legales disponibles."
+    "Los rivales se simulan con manos aleatorias "
+    "entre todas las combinaciones legales disponibles."
 )
