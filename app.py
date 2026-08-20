@@ -12,7 +12,7 @@ from treys import Card, Evaluator
 
 
 # ============================================================
-# 1. CONFIGURACION GENERAL
+# 1. CONFIGURACIÓN GENERAL
 # ============================================================
 
 st.set_page_config(
@@ -23,14 +23,15 @@ st.set_page_config(
 
 
 # ============================================================
-# 2. CARGAR IMAGEN DECORATIVA
+# 2. CARGAR LA IMAGEN DEL JOKER
 # ============================================================
 
 def image_b64(image_path):
     """
     Convierte una imagen local en texto Base64.
 
-    Esto permite utilizar joker.png como fondo decorativo.
+    El archivo joker.png debe estar en el mismo lugar
+    que app.py.
     """
 
     path = Path(image_path)
@@ -55,7 +56,7 @@ st.markdown(
     <style>
 
     /* ------------------------------------------------------
-       OCULTAR CABECERA DE STREAMLIT
+       OCULTAR ELEMENTOS SUPERIORES DE STREAMLIT
        ------------------------------------------------------ */
 
     [data-testid="stHeader"],
@@ -108,47 +109,66 @@ st.markdown(
 
 
     /* ------------------------------------------------------
-       CABECERA DE MARCA
+       CABECERA CORPORATIVA
        ------------------------------------------------------ */
 
     .brand-header {
-        p*sition: relative;
-        z-index:*20;
+        position: relative;
+        z-index: 20;
 
-        margin: 0 0 0.85rem 0*
+        margin: 0 0 0.90rem 0;
         padding: 0;
     }
 
-    .b*and-main {
+    .brand-main {
         display: flex;
-*       align-items: center;
+        align-items: center;
 
-     *  gap: 0.42rem;
+        gap: 0.42rem;
 
-        color: #f*ffff;
+        font-size: 1.78rem;
+        font-weight: 900;
+        line-height: 1.05;
 
-        font-size: 1.75rem;*        font-weight: 850;
-        *ine-height: 1.05;
+        background:
+            linear-gradient(
+                180deg,
+                #fff2a8 0%,
+                #f2c24f 42%,
+                #d99a16 100%
+            );
 
-        text-sh*dow:
-            0 2px 4px rgba(0,*0, 0, 0.8),
-            0 0 14px r*ba(255, 180, 40, 0.28);
+        -webkit-background-clip: text;
+        background-clip: text;
+
+        color: transparent;
+
+        text-shadow:
+            0 2px 4px rgba(0, 0, 0, 0.72),
+            0 0 16px rgba(242, 194, 79, 0.22);
     }
 
-   *.brand-symbol {
-        color: #e8*d25;
+    .brand-symbol {
+        color: #f2c24f;
+        -webkit-text-fill-color: #f2c24f;
+
+        filter:
+            drop-shadow(
+                0 2px 2px rgba(0, 0, 0, 0.55)
+            );
     }
 
-    .brand-signature {*        display: block;
+    .brand-signature {
+        display: block;
 
-        m*rgin-top: 0.42rem;
-        margin-*eft: 2rem;
+        margin-top: 0.42rem;
+        margin-left: 2rem;
 
-        color: rgba(25*, 255, 255, 0.88);
+        color: rgba(255, 255, 255, 0.90);
 
-        font-s*ze: 0.66rem;
+        font-size: 0.66rem;
         font-weight: 700;
-        line-height: 1.3;
+        line-height: 1.30;
         letter-spacing: 0.13rem;
     }
 
@@ -158,15 +178,15 @@ st.markdown(
        ------------------------------------------------------ */
 
     div[data-testid="stVerticalBlockBorderWrapper"] {
-        ba*kground:
-            linear-gradie*t(
+        background:
+            linear-gradient(
                 145deg,
-       *        rgba(2, 31, 21, 0.86),
-   *            rgba(4, 52, 34, 0.72)
-*           );
+                rgba(2, 31, 21, 0.86),
+                rgba(4, 52, 34, 0.72)
+            );
 
         border:
-   *        1px solid rgba(229, 169, 3*, 0.46) !important;
+            1px solid rgba(229, 169, 35, 0.46) !important;
 
         border-radius: 14px !important;
 
@@ -176,20 +196,20 @@ st.markdown(
 
 
     /* ------------------------------------------------------
-       TITULOS DE SECCION
+       TÍTULOS DE SECCIÓN
        ------------------------------------------------------ */
 
     .section-title {
-      * color: #ffffff !important;
+        color: #ffffff !important;
 
-     *  font-size: 0.90rem;
-        font*weight: 800;
+        font-size: 0.90rem;
+        font-weight: 800;
 
-        letter-spaci*g: 0.05rem;
-        text-transform* uppercase;
+        letter-spacing: 0.05rem;
+        text-transform: uppercase;
 
-        margin-top: 0*50rem;
-        margin-bottom: 0.30*em;
+        margin-top: 0.50rem;
+        margin-bottom: 0.30rem;
 
         text-shadow:
             0 1px 3px rgba(0, 0, 0, 0.85);
@@ -222,7 +242,7 @@ st.markdown(
 
 
     /* ------------------------------------------------------
-       CARTAS VISUALES
+       CARTAS VISUALES PRINCIPALES
        ------------------------------------------------------ */
 
     div[data-testid="stPopover"] > button {
@@ -253,10 +273,15 @@ st.markdown(
             inset 0 0 10px rgba(0, 0, 0, 0.08) !important;
 
         overflow: hidden !important;
+
+        transition:
+            transform 0.12s ease,
+            border-color 0.12s ease,
+            box-shadow 0.12s ease !important;
     }
 
 
-    /* Marco interior del naipe */
+    /* Marco interior de los naipes */
 
     div[data-testid="stPopover"] > button::after {
         content: "";
@@ -277,7 +302,7 @@ st.markdown(
     }
 
 
-    /* Contenedor del valor y palo */
+    /* Contenedor del valor de la carta */
 
     div[data-testid="stPopover"] > button
     [data-testid="stMarkdownContainer"] {
@@ -293,6 +318,8 @@ st.markdown(
     }
 
 
+    /* Valor y palo de las cartas negras */
+
     div[data-testid="stPopover"] > button
     [data-testid="stMarkdownContainer"] p {
         color: #111111 !important;
@@ -306,6 +333,8 @@ st.markdown(
         opacity: 1 !important;
     }
 
+
+    /* Valor y palo coloreados */
 
     div[data-testid="stPopover"] > button
     [data-testid="stMarkdownContainer"] span {
@@ -436,7 +465,7 @@ st.markdown(
 
 
     /* ------------------------------------------------------
-       SIMULACIONES
+       SELECTOR DE SIMULACIONES
        ------------------------------------------------------ */
 
     div[data-baseweb="select"] > div {
@@ -597,7 +626,7 @@ st.markdown(
 
 
     /* ------------------------------------------------------
-       PIE DE PAGINA
+       TEXTOS INFERIORES
        ------------------------------------------------------ */
 
     [data-testid="stCaptionContainer"] p {
@@ -613,7 +642,7 @@ st.markdown(
 
 
     /* ------------------------------------------------------
-       JOKER LATERAL
+       JOKER TRANSPARENTE
        ------------------------------------------------------ */
 
     .joker-background {
@@ -629,16 +658,16 @@ st.markdown(
         width: 390px;
         height: 100vh;
 
-        background-position: right center;
+        background-position: right bottom;
         background-repeat: no-repeat;
-        background-size: cover;
+        background-size: contain;
 
-        opacity: 0.25;
+        opacity: 0.30;
     }
 
 
     /* ======================================================
-       VERSION MOVIL
+       VERSIÓN MÓVIL
        ====================================================== */
 
     @media screen and (max-width: 640px) {
@@ -655,21 +684,21 @@ st.markdown(
 
 
         .brand-header {
-            margin-bottom: 0.56rem;
+            margin-bottom: 0.60rem;
         }
 
 
         .brand-main {
-            font-size: 1.22rem;
+            font-size: 1.24rem;
         }
 
 
         .brand-signature {
-            margin-top: 0.32rem;
+            margin-top: 0.34rem;
             margin-left: 1.50rem;
 
             font-size: 0.46rem;
-            line-height: 1.35;
+            line-height: 1.40;
             letter-spacing: 0.085rem;
         }
 
@@ -768,8 +797,9 @@ st.markdown(
             height: 50vh;
 
             right: -25px;
+            bottom: 0;
 
-            opacity: 0.05;
+            opacity: 0.07;
         }
     }
 
@@ -780,7 +810,7 @@ st.markdown(
 
 
 # ============================================================
-# 4. MOSTRAR EL JOKER
+# 4. MOSTRAR EL JOKER SIN FONDO ADICIONAL
 # ============================================================
 
 if JOKER_IMAGE:
@@ -789,11 +819,6 @@ if JOKER_IMAGE:
         (
             '<div class="joker-background" '
             'style="background-image:'
-            'linear-gradient('
-            'to left,'
-            'rgba(5,45,31,0.04),'
-            'rgba(5,45,31,0.50)'
-            '),'
             f'url(data:image/png;base64,{JOKER_IMAGE})'
             '">'
             '</div>'
@@ -883,7 +908,7 @@ def card_picker_label(card):
 
 
 # ============================================================
-# 6. ESTADO DE LA APLICACION
+# 6. ESTADO DE LA APLICACIÓN
 # ============================================================
 
 CARD_SLOTS = [
@@ -920,7 +945,7 @@ for state_key, default_value in DEFAULT_STATE.items():
 
 def clear_result():
     """
-    Borra el cálculo anterior.
+    Borra el resultado anterior.
     """
 
     st.session_state["calculation_result"] = None
@@ -929,7 +954,7 @@ def clear_result():
 
 def select_card(slot_key, card):
     """
-    Guarda una carta en la posición seleccionada.
+    Guarda una carta en una posición.
     """
 
     st.session_state[slot_key] = card
@@ -939,7 +964,7 @@ def select_card(slot_key, card):
 
 def reset_hand():
     """
-    Restaura la mano inicial.
+    Restaura todos los valores iniciales.
     """
 
     for state_key, default_value in DEFAULT_STATE.items():
@@ -971,8 +996,6 @@ def render_card_grid(
 ):
     """
     Muestra la baraja en filas de seis cartas.
-
-    Solo se ejecuta cuando el selector está abierto.
     """
 
     for start in range(
@@ -1012,7 +1035,10 @@ def card_picker(
     allow_empty=False
 ):
     """
-    Muestra una carta y abre la baraja al pulsarla.
+    Muestra una carta visual.
+
+    Las 52 opciones solo se generan cuando abrimos
+    el selector.
     """
 
     st.markdown(
@@ -1033,8 +1059,6 @@ def card_picker(
         on_change="rerun"
     )
 
-    # Las cartas solo se crean cuando abrimos el selector.
-    # Esto reduce mucho el tiempo de carga de la página.
     if popover.open:
 
         with popover:
@@ -1073,7 +1097,7 @@ def card_picker(
 
 
 # ============================================================
-# 8. VALIDACION
+# 8. VALIDACIÓN
 # ============================================================
 
 def validate_inputs(
@@ -1082,7 +1106,7 @@ def validate_inputs(
     players
 ):
     """
-    Valida cartas, mesa y jugadores.
+    Valida cartas y número de jugadores.
     """
 
     if None in hero_cards:
@@ -1119,7 +1143,7 @@ def validate_inputs(
 
 
 # ============================================================
-# 9. EVALUACION DE MANOS
+# 9. EVALUACIÓN DE MANOS
 # ============================================================
 
 def hand_score(
@@ -1147,7 +1171,7 @@ def hand_score(
 
 
 # ============================================================
-# 10. SIMULACION MONTE CARLO
+# 10. SIMULACIÓN MONTE CARLO
 # ============================================================
 
 def monte_carlo(
@@ -1327,7 +1351,7 @@ with st.container(border=True):
 
 
     # --------------------------------------------------------
-    # FLOP
+    # CARTAS COMUNITARIAS
     # --------------------------------------------------------
 
     st.markdown(
@@ -1368,10 +1392,6 @@ with st.container(border=True):
         )
 
 
-    # --------------------------------------------------------
-    # TURN Y RIVER
-    # --------------------------------------------------------
-
     turn_column, river_column = (
         st.columns(2)
     )
@@ -1394,7 +1414,7 @@ with st.container(border=True):
 
 
     # --------------------------------------------------------
-    # CONFIGURACION
+    # CONFIGURACIÓN
     # --------------------------------------------------------
 
     players_column, simulations_column = (
@@ -1456,7 +1476,7 @@ with st.container(border=True):
 
 
 # ============================================================
-# 13. EJECUTAR EL CALCULO
+# 13. EJECUTAR EL CÁLCULO
 # ============================================================
 
 if calculate_button:
@@ -1656,7 +1676,7 @@ if result and summary:
 
 
 # ============================================================
-# 15. PIE DE PAGINA
+# 15. PIE DE PÁGINA
 # ============================================================
 
 st.divider()
