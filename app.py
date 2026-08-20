@@ -895,7 +895,7 @@ st.markdown(
     '<span class="brand-symbol">♠</span>'
     '<span>POKER LAB</span>'
     '</div>'
-    '<div class="brand-signature">BY RAZA CHOPE</div>'
+    '<div class="brand-signature">BY ÁLVARO HDEZ</div>'
     '</div>',
     unsafe_allow_html=True
 )
