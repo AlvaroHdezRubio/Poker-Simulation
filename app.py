@@ -16,7 +16,7 @@ from treys import Card, Evaluator
 # ============================================================
 
 st.set_page_config(
-    page_title="Poker Lab by Raza Chope",
+    page_title="Poker Lab by Álvaro Hdez",
     page_icon="♠️",
     layout="centered"
 )
