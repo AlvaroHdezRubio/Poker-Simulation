@@ -20,9 +20,9 @@ from treys import Card, Evaluator
 # Configuramos el nombre de la pestaña, el icono
 # y la anchura general de la aplicación.
 st.set_page_config(
-    page_title="Raza Chope Pokah",
-    page_icon="🃏",
-    layout="centered"
+page_title="Poker Lab by Raza Chope",
+page_icon="♠️",
+layout="centered"
 )
 
 
@@ -111,24 +111,53 @@ st.markdown(
        TÍTULO PRINCIPAL
        ====================================================== */
 
-    .app-title {
-        display: block !important;
-        position: relative;
-        z-index: 10;
+st.markdown(
+    """
+    <div
+        style="
+            display: block;
+            position: relative;
+            z-index: 100;
+            margin: 0 0 0.7rem 0;
+            padding: 0;
+            color: #ffffff;
+            line-height: 1;
+            text-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.75),
+                0 0 14px rgba(255, 180, 40, 0.30);
+        "
+    >
+        <div
+            style="
+                display: flex;
+                align-items: center;
+                gap: 0.45rem;
+                font-size: 1.75rem;
+                font-weight: 850;
+                letter-spacing: -0.02rem;
+            "
+        >
+            <span style="color: #e8ad25;">♠</span>
+            <span>POKER LAB</span>
+        </div>
 
-        color: #ffffff !important;
-
-        font-size: 2rem;
-        font-weight: 850;
-        line-height: 1.1;
-
-        margin-top: 0;
-        margin-bottom: 0.65rem;
-
-        text-shadow:
-            0 2px 4px rgba(0, 0, 0, 0.75),
-            0 0 14px rgba(255, 180, 40, 0.28);
-    }
+        <div
+            style="
+                margin-top: 0.3rem;
+                margin-left: 2.05rem;
+                color: rgba(255, 255, 255, 0.78);
+                font-size: 0.7rem;
+                font-weight: 650;
+                letter-spacing: 0.14rem;
+            "
+        >
+            BY RAZA CHOPE
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+   
 
 
     /* ======================================================
