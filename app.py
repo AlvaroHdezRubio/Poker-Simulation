@@ -1008,25 +1008,32 @@ def card_visual_name(card):
 
 def card_picker_label(card):
     """
-    Etiqueta utilizada dentro de los naipes.
+    Genera la etiqueta visible del naipe.
 
-    Corazones y diamantes aparecen en rojo.
-    Picas y tréboles utilizan texto normal oscuro.
+    Picas y tréboles se muestran en negro.
+    Corazones y diamantes se muestran en rojo.
     """
 
+    # Posición vacía.
     if card is None:
-        return "＋"
+        return ':color[＋]{foreground="#374151"}'
 
+    # Obtenemos el valor y el símbolo del palo.
     rank = RANK_NAMES[card[0]]
     suit = SUIT_SYMBOLS[card[1]]
 
     # Corazones y diamantes en rojo.
     if card[1] in ("h", "d"):
-        return f":red[{rank} {suit}]"
+        return (
+            f':color[{rank} {suit}]'
+            f'{{foreground="#d62828"}}'
+        )
 
-    # Picas y tréboles como texto normal.
-    # El CSS fuerza este texto a color oscuro.
-    return f"{rank} {suit}"
+    # Picas y tréboles en negro.
+    return (
+        f':color[{rank} {suit}]'
+        f'{{foreground="#111111"}}'
+    )
 
 
 # ============================================================
