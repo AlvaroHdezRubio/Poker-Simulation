@@ -1,8 +1,3 @@
-# ============================================================
-# POKER LAB BY ÁLVARO HDEZ
-# Calculadora visual de probabilidades de Texas Hold'em
-# ============================================================
-
 import base64
 import random
 from pathlib import Path
@@ -23,22 +18,24 @@ st.set_page_config(
 
 
 # ============================================================
-# 2. CARGAR LA IMAGEN DEL JOKER
+# 2. CARGAR IMAGEN DEL JOKER
 # ============================================================
 
-def image_b64(image_path):
+def image_b64(path):
     """
-    Convierte joker.png a Base64 para utilizarlo
-    como imagen decorativa.
+    Convierte una imagen local en texto Base64.
+
+    joker.png debe estar en la raíz del repositorio,
+    junto a app.py.
     """
 
-    path = Path(image_path)
+    image_path = Path(path)
 
-    if not path.exists():
+    if not image_path.exists():
         return None
 
     return base64.b64encode(
-        path.read_bytes()
+        image_path.read_bytes()
     ).decode("utf-8")
 
 
@@ -50,10 +47,10 @@ JOKER_IMAGE = image_b64("joker.png")
 # ============================================================
 
 st.markdown(
-    """
+    r"""
     <style>
 
-    /* Ocultar la cabecera superior de Streamlit */
+    /* Ocultar elementos superiores de Streamlit */
 
     [data-testid="stHeader"],
     [data-testid="stToolbar"] {
@@ -108,17 +105,16 @@ st.markdown(
         position: relative;
         z-index: 20;
 
-        margin: 0 0 0.90rem 0;
-        padding: 0;
+        margin: 0 0 0.80rem 0;
     }
 
     .brand-main {
         display: flex;
         align-items: center;
 
-        gap: 0.42rem;
+        gap: 0.40rem;
 
-        font-size: 1.78rem;
+        font-size: 1.75rem;
         font-weight: 900;
         line-height: 1.05;
 
@@ -143,20 +139,17 @@ st.markdown(
     .brand-symbol {
         color: #f2c24f;
         -webkit-text-fill-color: #f2c24f;
-
-        filter:
-            drop-shadow(
-                0 2px 2px rgba(0, 0, 0, 0.55)
-            );
     }
 
     .brand-signature {
-        display: block;
+        margin:
+            0.42rem
+            0
+            0
+            2rem;
 
-        margin-top: 0.42rem;
-        margin-left: 2rem;
-
-        color: rgba(255, 255, 255, 0.90);
+        color:
+            rgba(255, 255, 255, 0.88);
 
         font-size: 0.66rem;
         font-weight: 700;
@@ -178,12 +171,14 @@ st.markdown(
             );
 
         border:
-            1px solid rgba(229, 169, 35, 0.46) !important;
+            1px solid
+            rgba(229, 169, 35, 0.46) !important;
 
         border-radius: 14px !important;
 
         box-shadow:
-            0 10px 28px rgba(0, 0, 0, 0.28);
+            0 10px 28px
+            rgba(0, 0, 0, 0.28);
     }
 
 
@@ -198,19 +193,20 @@ st.markdown(
         letter-spacing: 0.05rem;
         text-transform: uppercase;
 
-        margin-top: 0.50rem;
-        margin-bottom: 0.30rem;
+        margin:
+            0.50rem
+            0
+            0.30rem;
 
         text-shadow:
-            0 1px 3px rgba(0, 0, 0, 0.85);
+            0 1px 3px
+            rgba(0, 0, 0, 0.85);
     }
 
 
     /* Etiquetas Carta 1, Flop 1, etc. */
 
     .card-position-label {
-        display: block;
-
         width: 100%;
 
         color: #ffffff !important;
@@ -222,10 +218,14 @@ st.markdown(
         text-align: center;
 
         margin: 0;
-        padding: 0 0 0.28rem 0;
+
+        padding:
+            0
+            0
+            0.28rem;
 
         text-shadow:
-            0 1px 3px rgba(0, 0, 0, 1);
+            0 1px 3px #000000;
     }
 
 
@@ -252,37 +252,31 @@ st.markdown(
         color: #111111 !important;
 
         border:
-            2px solid rgba(255, 255, 255, 0.94) !important;
+            2px solid
+            rgba(255, 255, 255, 0.94) !important;
 
         border-radius: 9px !important;
 
         box-shadow:
-            0 5px 10px rgba(0, 0, 0, 0.40),
-            inset 0 0 10px rgba(0, 0, 0, 0.08) !important;
+            0 5px 10px
+            rgba(0, 0, 0, 0.40) !important;
 
         overflow: hidden !important;
-
-        transition:
-            transform 0.12s ease,
-            border-color 0.12s ease,
-            box-shadow 0.12s ease !important;
     }
 
 
-    /* Marco interior de la carta */
+    /* Marco interior del naipe */
 
     div[data-testid="stPopover"] > button::after {
         content: "";
 
         position: absolute;
 
-        top: 5px;
-        right: 5px;
-        bottom: 5px;
-        left: 5px;
+        inset: 5px;
 
         border:
-            1px solid rgba(25, 35, 28, 0.17);
+            1px solid
+            rgba(25, 35, 28, 0.17);
 
         border-radius: 6px;
 
@@ -290,7 +284,7 @@ st.markdown(
     }
 
 
-    /* Centrar el valor y el palo */
+    /* Centrar la carta */
 
     div[data-testid="stPopover"] > button
     [data-testid="stMarkdownContainer"] {
@@ -306,6 +300,8 @@ st.markdown(
     }
 
 
+    /* Texto de picas y tréboles */
+
     div[data-testid="stPopover"] > button
     [data-testid="stMarkdownContainer"] p {
         color: #111111 !important;
@@ -319,6 +315,8 @@ st.markdown(
         opacity: 1 !important;
     }
 
+
+    /* Texto coloreado */
 
     div[data-testid="stPopover"] > button
     [data-testid="stMarkdownContainer"] span {
@@ -336,7 +334,8 @@ st.markdown(
         border-color: #e5a923 !important;
 
         box-shadow:
-            0 8px 15px rgba(0, 0, 0, 0.46) !important;
+            0 8px 15px
+            rgba(0, 0, 0, 0.46) !important;
     }
 
 
@@ -364,7 +363,8 @@ st.markdown(
         background-color: #f8f6ee !important;
 
         border:
-            1px solid rgba(40, 45, 40, 0.25) !important;
+            1px solid
+            rgba(40, 45, 40, 0.25) !important;
 
         border-radius: 6px !important;
 
@@ -372,8 +372,7 @@ st.markdown(
     }
 
 
-    div[data-testid="stPopoverBody"] button
-    [data-testid="stMarkdownContainer"] p {
+    div[data-testid="stPopoverBody"] button p {
         color: #111111 !important;
 
         font-size: 0.76rem !important;
@@ -383,8 +382,7 @@ st.markdown(
     }
 
 
-    div[data-testid="stPopoverBody"] button
-    [data-testid="stMarkdownContainer"] span {
+    div[data-testid="stPopoverBody"] button span {
         font-size: 0.76rem !important;
         font-weight: 800 !important;
     }
@@ -392,6 +390,7 @@ st.markdown(
 
     div[data-testid="stPopoverBody"] button:hover {
         background-color: #fff5c9 !important;
+
         border-color: #e5a923 !important;
     }
 
@@ -404,7 +403,7 @@ st.markdown(
 
 
     /* ======================================================
-       ETIQUETAS DE CONTROLES
+       CONTROLES
        ====================================================== */
 
     [data-testid="stWidgetLabel"] p {
@@ -412,13 +411,8 @@ st.markdown(
 
         font-size: 0.78rem !important;
         font-weight: 700 !important;
-
-        text-shadow:
-            0 1px 2px rgba(0, 0, 0, 0.70);
     }
 
-
-    /* Número de jugadores */
 
     [data-testid="stNumberInput"] input {
         min-height: 2.40rem;
@@ -426,7 +420,6 @@ st.markdown(
         background-color: #f7f8f7 !important;
         color: #17231d !important;
 
-        font-size: 1rem;
         font-weight: 800;
 
         text-align: center;
@@ -441,13 +434,6 @@ st.markdown(
     }
 
 
-    [data-testid="stNumberInput"] button:hover {
-        background-color: #0e6946 !important;
-    }
-
-
-    /* Selector de simulaciones */
-
     div[data-baseweb="select"] > div {
         min-height: 2.40rem;
 
@@ -459,11 +445,12 @@ st.markdown(
 
     div[data-baseweb="select"] span {
         color: #17231d !important;
+
         font-weight: 650;
     }
 
 
-    /* Botones */
+    /* Botones principales */
 
     div[data-testid="stButton"] button {
         min-height: 2.40rem;
@@ -479,12 +466,8 @@ st.markdown(
 
         color: #172016;
 
-        border: 1px solid #ffd46d;
-    }
-
-
-    div[data-testid="stButton"] button[kind="primary"]:hover {
-        background-color: #f2bd3e;
+        border:
+            1px solid #ffd46d;
     }
 
 
@@ -495,7 +478,8 @@ st.markdown(
         color: #ffffff;
 
         border:
-            1px solid rgba(255, 255, 255, 0.45);
+            1px solid
+            rgba(255, 255, 255, 0.45);
     }
 
 
@@ -507,7 +491,10 @@ st.markdown(
         display: grid;
 
         grid-template-columns:
-            repeat(3, minmax(0, 1fr));
+            repeat(
+                3,
+                minmax(0, 1fr)
+            );
 
         gap: 0.35rem;
 
@@ -517,7 +504,9 @@ st.markdown(
 
 
     .result-card {
-        padding: 0.55rem 0.15rem;
+        padding:
+            0.55rem
+            0.15rem;
 
         background-color:
             rgba(2, 26, 18, 0.92);
@@ -530,19 +519,22 @@ st.markdown(
 
     .result-win {
         border:
-            1px solid rgba(85, 190, 77, 0.60);
+            1px solid
+            rgba(85, 190, 77, 0.60);
     }
 
 
     .result-tie {
         border:
-            1px solid rgba(229, 169, 35, 0.65);
+            1px solid
+            rgba(229, 169, 35, 0.65);
     }
 
 
     .result-loss {
         border:
-            1px solid rgba(220, 62, 55, 0.65);
+            1px solid
+            rgba(220, 62, 55, 0.65);
     }
 
 
@@ -580,19 +572,22 @@ st.markdown(
     }
 
 
-    /* Resumen debajo de los resultados */
+    /* Resumen debajo de las probabilidades */
 
     .hand-summary {
         margin-top: 0.45rem;
         margin-bottom: 0.15rem;
 
-        padding: 0.50rem 0.65rem;
+        padding:
+            0.50rem
+            0.65rem;
 
         background-color:
             rgba(2, 28, 19, 0.86);
 
         border:
-            1px solid rgba(229, 169, 35, 0.45);
+            1px solid
+            rgba(229, 169, 35, 0.45);
 
         border-radius: 10px;
 
@@ -602,8 +597,6 @@ st.markdown(
         line-height: 1.50;
     }
 
-
-    /* Textos inferiores */
 
     [data-testid="stCaptionContainer"] p {
         color:
@@ -618,7 +611,7 @@ st.markdown(
 
 
     /* ======================================================
-       JOKER INTEGRADO CON EL TAPETE
+       JOKER INTEGRADO
        ====================================================== */
 
     .joker-background {
@@ -675,29 +668,32 @@ st.markdown(
             width: 100% !important;
             max-width: 100% !important;
 
-            padding-top: 0.28rem !important;
-            padding-left: 0.32rem !important;
-            padding-right: 0.32rem !important;
-            padding-bottom: 0.70rem !important;
+            padding:
+                0.28rem
+                0.32rem
+                0.70rem !important;
         }
 
 
         .brand-header {
-            margin-bottom: 0.60rem;
+            margin-bottom: 0.56rem;
         }
 
 
         .brand-main {
-            font-size: 1.24rem;
+            font-size: 1.22rem;
         }
 
 
         .brand-signature {
-            margin-top: 0.34rem;
-            margin-left: 1.50rem;
+            margin:
+                0.32rem
+                0
+                0
+                1.50rem;
 
             font-size: 0.46rem;
-            line-height: 1.40;
+            line-height: 1.35;
             letter-spacing: 0.085rem;
         }
 
@@ -705,8 +701,10 @@ st.markdown(
         .section-title {
             font-size: 0.66rem;
 
-            margin-top: 0.32rem;
-            margin-bottom: 0.20rem;
+            margin:
+                0.32rem
+                0
+                0.20rem;
         }
 
 
@@ -737,10 +735,8 @@ st.markdown(
         }
 
 
-        div[data-testid="stPopoverBody"] button
-        [data-testid="stMarkdownContainer"] p,
-        div[data-testid="stPopoverBody"] button
-        [data-testid="stMarkdownContainer"] span {
+        div[data-testid="stPopoverBody"] button p,
+        div[data-testid="stPopoverBody"] button span {
             font-size: 0.68rem !important;
         }
 
@@ -770,7 +766,9 @@ st.markdown(
 
 
         .result-card {
-            padding: 0.42rem 0.06rem;
+            padding:
+                0.42rem
+                0.06rem;
         }
 
 
@@ -785,7 +783,9 @@ st.markdown(
 
 
         .hand-summary {
-            padding: 0.40rem 0.48rem;
+            padding:
+                0.40rem
+                0.48rem;
 
             font-size: 0.68rem;
         }
@@ -815,11 +815,6 @@ st.markdown(
                     rgba(0, 0, 0, 0.18) 28%,
                     black 68%
                 );
-
-            filter:
-                saturate(0.80)
-                contrast(1.02)
-                brightness(0.82);
         }
     }
 
@@ -830,7 +825,7 @@ st.markdown(
 
 
 # ============================================================
-# 4. MOSTRAR EL JOKER SIN CAPA ADICIONAL
+# 4. MOSTRAR JOKER
 # ============================================================
 
 if JOKER_IMAGE:
@@ -905,7 +900,10 @@ def card_visual_name(card):
 
 def card_picker_label(card):
     """
-    Genera la etiqueta coloreada de una carta.
+    Devuelve una etiqueta coloreada.
+
+    Corazones y diamantes aparecen en rojo.
+    Picas y tréboles aparecen en negro.
     """
 
     if card is None:
@@ -913,10 +911,11 @@ def card_picker_label(card):
 
     text = card_visual_name(card)
 
-    if card[1] in ("h", "d"):
-        color = "#d62828"
-    else:
-        color = "#111111"
+    color = (
+        "#d62828"
+        if card[1] in ("h", "d")
+        else "#111111"
+    )
 
     return (
         f':color[{text}]'
@@ -925,7 +924,7 @@ def card_picker_label(card):
 
 
 # ============================================================
-# 6. ESTADO DE LA APLICACIÓN
+# 6. ESTADO
 # ============================================================
 
 CARD_SLOTS = [
@@ -954,27 +953,37 @@ DEFAULT_STATE = {
 }
 
 
-for state_key, default_value in DEFAULT_STATE.items():
+for key, value in DEFAULT_STATE.items():
 
-    if state_key not in st.session_state:
-        st.session_state[state_key] = default_value
+    if key not in st.session_state:
+        st.session_state[key] = value
 
 
 def clear_result():
     """
-    Borra el resultado anterior.
+    Borra el cálculo anterior.
     """
 
-    st.session_state["calculation_result"] = None
-    st.session_state["calculation_summary"] = None
+    st.session_state[
+        "calculation_result"
+    ] = None
+
+    st.session_state[
+        "calculation_summary"
+    ] = None
 
 
-def select_card(slot_key, card):
+def select_card(
+    slot_key,
+    card
+):
     """
-    Guarda una carta seleccionada.
+    Guarda una carta en una posición.
     """
 
-    st.session_state[slot_key] = card
+    st.session_state[
+        slot_key
+    ] = card
 
     clear_result()
 
@@ -984,13 +993,16 @@ def reset_hand():
     Restaura la mano inicial.
     """
 
-    for state_key, default_value in DEFAULT_STATE.items():
-        st.session_state[state_key] = default_value
+    for key, value in DEFAULT_STATE.items():
+        st.session_state[key] = value
 
 
-def used_cards_except(current_slot):
+def used_cards_except(
+    current_slot
+):
     """
-    Devuelve las cartas utilizadas en otras posiciones.
+    Devuelve las cartas utilizadas
+    en otras posiciones.
     """
 
     return {
@@ -998,13 +1010,14 @@ def used_cards_except(current_slot):
         for slot in CARD_SLOTS
         if (
             slot != current_slot
-            and st.session_state[slot] is not None
+            and st.session_state[slot]
+            is not None
         )
     }
 
 
 # ============================================================
-# 7. SELECTOR VISUAL DE CARTAS
+# 7. SELECTOR VISUAL
 # ============================================================
 
 def render_card_grid(
@@ -1012,7 +1025,8 @@ def render_card_grid(
     unavailable_cards
 ):
     """
-    Muestra la baraja en filas de seis cartas.
+    Muestra la baraja en filas
+    de seis cartas.
     """
 
     for start in range(
@@ -1036,17 +1050,72 @@ def render_card_grid(
 
                 st.button(
                     card_picker_label(card),
-                    key=f"choose_{slot_key}_{card}",
+                    key=(
+                        f"choose_"
+                        f"{slot_key}_"
+                        f"{card}"
+                    ),
                     disabled=(
-                        card in unavailable_cards
+                        card in
+                        unavailable_cards
                     ),
                     use_container_width=True,
                     on_click=select_card,
-                    args=(slot_key, card)
+                    args=(
+                        slot_key,
+                        card
+                    )
                 )
 
 
 def card_picker(
     slot_key,
     position_label,
-    allow
+    allow_empty=False
+):
+    """
+    Muestra una carta interactiva.
+
+    Las 52 opciones se generan únicamente
+    cuando se abre el selector.
+    """
+
+    st.markdown(
+        (
+            '<div '
+            'class="card-position-label">'
+            f'{position_label}'
+            '</div>'
+        ),
+        unsafe_allow_html=True
+    )
+
+
+    popover = st.popover(
+        card_picker_label(
+            st.session_state[
+                slot_key
+            ]
+        ),
+        use_container_width=True,
+        key=(
+            f"picker_{slot_key}"
+        ),
+        on_change="rerun"
+    )
+
+
+    if popover.open:
+
+        with popover:
+
+            st.markdown(
+                (
+                    '<div '
+                    'class="picker-title">'
+                    f'Seleccionar '
+                    f'{position_label}'
+                    '</div>'
+                ),
+                unsafe_allow_html=True
+          
