@@ -156,27 +156,130 @@ div[data-testid="stPopoverBody"] button p{
 }
 
 
-/* Botón compacto de ayuda */
-.st-key-help_popover button[aria-haspopup="dialog"] {
-    min-height: 2rem !important;
-    width: auto !important;
-    padding: 0.25rem 0.70rem !important;
-    background: rgba(3,42,27,0.86) !important;
-    color: #ffffff !important;
-    border: 1px solid rgba(242,194,79,0.68) !important;
-    border-radius: 999px !important;
-    font-size: 0.75rem !important;
-    font-weight: 750 !important;
-}
-.st-key-help_popover button[aria-haspopup="dialog"] p {
-    color: #ffffff !important;
-    margin: 0 !important;
-}
-@media screen and (max-width:640px) {
-    .st-key-help_popover button[aria-haspopup="dialog"] {
-        min-height: 1.85rem !important;
-        padding: 0.18rem 0.55rem !important;
-        font-size: 0.66rem !important;
+/* ==========================================================
+   AJUSTE FINAL PARA POPOVERS EN MOVIL
+   ========================================================== */
+@media screen and (max-width: 640px) {
+
+    /* Pop-up de ayuda: ancho contenido y texto siempre dentro */
+    div[data-testid="stPopoverBody"]:has(h3) {
+        width: calc(100vw - 34px) !important;
+        max-width: 330px !important;
+        min-width: 0 !important;
+        padding: 0.85rem !important;
+        overflow-x: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    div[data-testid="stPopoverBody"]:has(h3) * {
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    div[data-testid="stPopoverBody"]:has(h3) p,
+    div[data-testid="stPopoverBody"]:has(h3) li,
+    div[data-testid="stPopoverBody"]:has(h3) div {
+        white-space: normal !important;
+        overflow-wrap: anywhere !important;
+        word-break: normal !important;
+    }
+
+    div[data-testid="stPopoverBody"]:has(h3) h3 {
+        font-size: 1.15rem !important;
+        line-height: 1.25 !important;
+        margin-bottom: 0.65rem !important;
+    }
+
+    div[data-testid="stPopoverBody"]:has(h3) p,
+    div[data-testid="stPopoverBody"]:has(h3) li {
+        font-size: 0.78rem !important;
+        line-height: 1.4 !important;
+    }
+
+    div[data-testid="stPopoverBody"]:has(h3) ol,
+    div[data-testid="stPopoverBody"]:has(h3) ul {
+        padding-left: 1.15rem !important;
+        margin-right: 0 !important;
+    }
+
+    /* Selector de cartas: algo mas estrecho que la pantalla */
+    div[data-testid="stPopoverBody"]:has(.picker-title) {
+        width: calc(100vw - 38px) !important;
+        max-width: 338px !important;
+        min-width: 0 !important;
+        padding: 0.70rem !important;
+        overflow-x: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    div[data-testid="stPopoverBody"]:has(.picker-title) > div,
+    div[data-testid="stPopoverBody"]:has(.picker-title) [data-testid="stVerticalBlock"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        overflow-x: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Exactamente tres cartas por fila, sin scroll lateral */
+    div[data-testid="stPopoverBody"]:has(.picker-title)
+    div[data-testid="stHorizontalBlock"] {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        gap: 0.28rem !important;
+        overflow: hidden !important;
+    }
+
+    div[data-testid="stPopoverBody"]:has(.picker-title)
+    div[data-testid="stColumn"] {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        flex: none !important;
+        padding: 0 !important;
+    }
+
+    div[data-testid="stPopoverBody"]:has(.picker-title)
+    div[data-testid="stColumn"] button {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        min-height: 2.05rem !important;
+        padding: 0.08rem 0.02rem !important;
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+        color: #111111 !important;
+        border: 1px solid #d7d7d7 !important;
+        border-radius: 6px !important;
+        box-sizing: border-box !important;
+    }
+
+    div[data-testid="stPopoverBody"]:has(.picker-title)
+    div[data-testid="stColumn"] button p,
+    div[data-testid="stPopoverBody"]:has(.picker-title)
+    div[data-testid="stColumn"] button span {
+        font-size: 0.68rem !important;
+        line-height: 1 !important;
+        white-space: nowrap !important;
+        margin: 0 !important;
+    }
+
+    /* Sin carta ocupa el ancho disponible, sin salirse */
+    div[data-testid="stPopoverBody"]:has(.picker-title)
+    .st-key-clear_flop_card_1 button,
+    div[data-testid="stPopoverBody"]:has(.picker-title)
+    .st-key-clear_flop_card_2 button,
+    div[data-testid="stPopoverBody"]:has(.picker-title)
+    .st-key-clear_flop_card_3 button,
+    div[data-testid="stPopoverBody"]:has(.picker-title)
+    .st-key-clear_turn_card button,
+    div[data-testid="stPopoverBody"]:has(.picker-title)
+    .st-key-clear_river_card button {
+        width: 100% !important;
+        max-width: 100% !important;
     }
 }
 
@@ -309,45 +412,6 @@ def monte_carlo(hero, board, players, simulations):
 
 
 st.markdown('<div class="brand-header"><div class="brand-main"><span class="brand-symbol">♠</span><span>POKER LAB</span></div><div class="brand-signature">BY ÁLVARO HDEZ</div></div>', unsafe_allow_html=True)
-
-# ============================================================
-# AYUDA: CÓMO FUNCIONA
-# ============================================================
-
-with st.popover(
-    "ℹ️ Cómo funciona",
-    key="help_popover",
-    use_container_width=False
-):
-    st.markdown(
-        """
-        ### Cómo utilizar Poker Lab
-
-        1. **Selecciona tus dos cartas** pulsando sobre cada naipe.
-        2. Añade las tres cartas del **flop** cuando aparezcan.
-        3. Incorpora después el **turn** y el **river**.
-        4. Indica los **jugadores activos**, incluyéndote.
-        5. Elige el número de **simulaciones**.
-        6. Pulsa **Calcular probabilidades**.
-
-        Poker Lab simula miles de posibles repartos y estima:
-
-        - 🟢 **Victoria**
-        - 🟡 **Empate**
-        - 🔴 **Derrota**
-        """
-    )
-
-    st.info(
-        "Cuantas más simulaciones selecciones, más estable será "
-        "la estimación, aunque el cálculo puede tardar algo más."
-    )
-
-    st.caption(
-        "Los resultados son estimaciones estadísticas y pueden "
-        "variar ligeramente entre cálculos."
-    )
-
 
 with st.container(border=True):
     st.markdown('<div class="section-title">Tus cartas</div>', unsafe_allow_html=True)
