@@ -157,65 +157,197 @@ div[data-testid="stPopoverBody"] button p{
 
 
 /* ==========================================================
-   BOTON DE AYUDA, SIEMPRE VISIBLE
+   AJUSTE FINAL PARA POPOVERS EN MOVIL
    ========================================================== */
-.st-key-help_popover {
-    position: relative !important;
-    z-index: 30 !important;
-    display: block !important;
-    width: fit-content !important;
-    margin: 0 0 0.55rem 0 !important;
-}
-
-.st-key-help_popover button[aria-haspopup="dialog"] {
-    display: inline-flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    width: auto !important;
-    min-width: 0 !important;
-    min-height: 2rem !important;
-    padding: 0.22rem 0.65rem !important;
-    background: rgba(3, 42, 27, 0.94) !important;
-    background-color: rgba(3, 42, 27, 0.94) !important;
-    color: #ffffff !important;
-    border: 1px solid rgba(242, 194, 79, 0.78) !important;
-    border-radius: 999px !important;
-    box-shadow: none !important;
-}
-
-.st-key-help_popover button[aria-haspopup="dialog"] p,
-.st-key-help_popover button[aria-haspopup="dialog"] span {
-    color: #ffffff !important;
-    font-size: 0.75rem !important;
-    font-weight: 750 !important;
-    line-height: 1 !important;
-    margin: 0 !important;
-}
-
 @media screen and (max-width: 640px) {
+
+    /* Pop-up de ayuda: ancho contenido y texto siempre dentro */
+    div[data-testid="stPopoverBody"]:has(h3) {
+        width: calc(100vw - 34px) !important;
+        max-width: 330px !important;
+        min-width: 0 !important;
+        padding: 0.85rem !important;
+        overflow-x: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    div[data-testid="stPopoverBody"]:has(h3) * {
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    div[data-testid="stPopoverBody"]:has(h3) p,
+    div[data-testid="stPopoverBody"]:has(h3) li,
+    div[data-testid="stPopoverBody"]:has(h3) div {
+        white-space: normal !important;
+        overflow-wrap: anywhere !important;
+        word-break: normal !important;
+    }
+
+    div[data-testid="stPopoverBody"]:has(h3) h3 {
+        font-size: 1.15rem !important;
+        line-height: 1.25 !important;
+        margin-bottom: 0.65rem !important;
+    }
+
+    div[data-testid="stPopoverBody"]:has(h3) p,
+    div[data-testid="stPopoverBody"]:has(h3) li {
+        font-size: 0.78rem !important;
+        line-height: 1.4 !important;
+    }
+
+    div[data-testid="stPopoverBody"]:has(h3) ol,
+    div[data-testid="stPopoverBody"]:has(h3) ul {
+        padding-left: 1.15rem !important;
+        margin-right: 0 !important;
+    }
+
+    /* Selector de cartas: algo mas estrecho que la pantalla */
+    div[data-testid="stPopoverBody"]:has(.picker-title) {
+        width: calc(100vw - 38px) !important;
+        max-width: 338px !important;
+        min-width: 0 !important;
+        padding: 0.70rem !important;
+        overflow-x: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    div[data-testid="stPopoverBody"]:has(.picker-title) > div,
+    div[data-testid="stPopoverBody"]:has(.picker-title) [data-testid="stVerticalBlock"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        overflow-x: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Exactamente tres cartas por fila, sin scroll lateral */
+    div[data-testid="stPopoverBody"]:has(.picker-title)
+    div[data-testid="stHorizontalBlock"] {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        gap: 0.28rem !important;
+        overflow: hidden !important;
+    }
+
+    div[data-testid="stPopoverBody"]:has(.picker-title)
+    div[data-testid="stColumn"] {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        flex: none !important;
+        padding: 0 !important;
+    }
+
+    div[data-testid="stPopoverBody"]:has(.picker-title)
+    div[data-testid="stColumn"] button {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        min-height: 2.05rem !important;
+        padding: 0.08rem 0.02rem !important;
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+        color: #111111 !important;
+        border: 1px solid #d7d7d7 !important;
+        border-radius: 6px !important;
+        box-sizing: border-box !important;
+    }
+
+    div[data-testid="stPopoverBody"]:has(.picker-title)
+    div[data-testid="stColumn"] button p,
+    div[data-testid="stPopoverBody"]:has(.picker-title)
+    div[data-testid="stColumn"] button span {
+        font-size: 0.68rem !important;
+        line-height: 1 !important;
+        white-space: nowrap !important;
+        margin: 0 !important;
+    }
+
+    /* Sin carta ocupa el ancho disponible, sin salirse */
+    div[data-testid="stPopoverBody"]:has(.picker-title)
+    .st-key-clear_flop_card_1 button,
+    div[data-testid="stPopoverBody"]:has(.picker-title)
+    .st-key-clear_flop_card_2 button,
+    div[data-testid="stPopoverBody"]:has(.picker-title)
+    .st-key-clear_flop_card_3 button,
+    div[data-testid="stPopoverBody"]:has(.picker-title)
+    .st-key-clear_turn_card button,
+    div[data-testid="stPopoverBody"]:has(.picker-title)
+    .st-key-clear_river_card button {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+# Estilo exclusivo del botón de ayuda.
+# Está separado del CSS de las cartas para no modificar sus anchos.
+st.markdown(
+    r"""
+    <style>
     .st-key-help_popover {
+        position: relative !important;
+        z-index: 40 !important;
         display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        margin-bottom: 0.48rem !important;
+        width: fit-content !important;
+        margin: 0 0 0.50rem 0 !important;
     }
 
     .st-key-help_popover button[aria-haspopup="dialog"] {
         display: inline-flex !important;
         visibility: visible !important;
         opacity: 1 !important;
-        min-height: 1.85rem !important;
-        padding: 0.18rem 0.55rem !important;
+        width: auto !important;
+        min-width: 0 !important;
+        min-height: 2rem !important;
+        padding: 0.22rem 0.65rem !important;
+        background: rgba(3, 42, 27, 0.94) !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(242, 194, 79, 0.78) !important;
+        border-radius: 999px !important;
+        box-shadow: none !important;
     }
 
     .st-key-help_popover button[aria-haspopup="dialog"] p,
     .st-key-help_popover button[aria-haspopup="dialog"] span {
-        font-size: 0.66rem !important;
+        color: #ffffff !important;
+        font-size: 0.75rem !important;
+        font-weight: 750 !important;
+        line-height: 1 !important;
+        margin: 0 !important;
     }
-}
 
-</style>
-""", unsafe_allow_html=True)
+    @media screen and (max-width: 640px) {
+        .st-key-help_popover {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            margin-bottom: 0.45rem !important;
+        }
+
+        .st-key-help_popover button[aria-haspopup="dialog"] {
+            display: inline-flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            min-height: 1.85rem !important;
+            padding: 0.18rem 0.55rem !important;
+        }
+
+        .st-key-help_popover button[aria-haspopup="dialog"] p,
+        .st-key-help_popover button[aria-haspopup="dialog"] span {
+            font-size: 0.66rem !important;
+        }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 if JOKER_IMAGE:
     st.markdown(f'<div class="joker-background" style="background-image:url(data:image/png;base64,{JOKER_IMAGE})"></div>', unsafe_allow_html=True)
