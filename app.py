@@ -155,6 +155,31 @@ div[data-testid="stPopoverBody"] button p{
   }
 }
 
+
+/* Botón compacto de ayuda */
+.st-key-help_popover button[aria-haspopup="dialog"] {
+    min-height: 2rem !important;
+    width: auto !important;
+    padding: 0.25rem 0.70rem !important;
+    background: rgba(3,42,27,0.86) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(242,194,79,0.68) !important;
+    border-radius: 999px !important;
+    font-size: 0.75rem !important;
+    font-weight: 750 !important;
+}
+.st-key-help_popover button[aria-haspopup="dialog"] p {
+    color: #ffffff !important;
+    margin: 0 !important;
+}
+@media screen and (max-width:640px) {
+    .st-key-help_popover button[aria-haspopup="dialog"] {
+        min-height: 1.85rem !important;
+        padding: 0.18rem 0.55rem !important;
+        font-size: 0.66rem !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -284,6 +309,45 @@ def monte_carlo(hero, board, players, simulations):
 
 
 st.markdown('<div class="brand-header"><div class="brand-main"><span class="brand-symbol">♠</span><span>POKER LAB</span></div><div class="brand-signature">BY ÁLVARO HDEZ</div></div>', unsafe_allow_html=True)
+
+# ============================================================
+# AYUDA: CÓMO FUNCIONA
+# ============================================================
+
+with st.popover(
+    "ℹ️ Cómo funciona",
+    key="help_popover",
+    use_container_width=False
+):
+    st.markdown(
+        """
+        ### Cómo utilizar Poker Lab
+
+        1. **Selecciona tus dos cartas** pulsando sobre cada naipe.
+        2. Añade las tres cartas del **flop** cuando aparezcan.
+        3. Incorpora después el **turn** y el **river**.
+        4. Indica los **jugadores activos**, incluyéndote.
+        5. Elige el número de **simulaciones**.
+        6. Pulsa **Calcular probabilidades**.
+
+        Poker Lab simula miles de posibles repartos y estima:
+
+        - 🟢 **Victoria**
+        - 🟡 **Empate**
+        - 🔴 **Derrota**
+        """
+    )
+
+    st.info(
+        "Cuantas más simulaciones selecciones, más estable será "
+        "la estimación, aunque el cálculo puede tardar algo más."
+    )
+
+    st.caption(
+        "Los resultados son estimaciones estadísticas y pueden "
+        "variar ligeramente entre cálculos."
+    )
+
 
 with st.container(border=True):
     st.markdown('<div class="section-title">Tus cartas</div>', unsafe_allow_html=True)
