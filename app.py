@@ -183,7 +183,7 @@ def card_picker_label(card):
 
 
 CARD_SLOTS = ["hero_card_1","hero_card_2","flop_card_1","flop_card_2","flop_card_3","turn_card","river_card"]
-DEFAULT_STATE = {"hero_card_1":"Kh","hero_card_2":"Ks","flop_card_1":None,"flop_card_2":None,"flop_card_3":None,"turn_card":None,"river_card":None,"active_players":6,"simulations":25000,"calculation_result":None,"calculation_summary":None}
+DEFAULT_STATE = {"hero_card_1":None,"hero_card_2":None,"flop_card_1":None,"flop_card_2":None,"flop_card_3":None,"turn_card":None,"river_card":None,"active_players":3,"simulations":25000,"calculation_result":None,"calculation_summary":None}
 for key, value in DEFAULT_STATE.items():
     if key not in st.session_state:
         st.session_state[key] = value
