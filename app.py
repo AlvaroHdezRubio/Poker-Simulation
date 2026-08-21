@@ -474,6 +474,231 @@ def monte_carlo(hero, board, players, simulations):
     return {"victoria":round(wins/simulations*100,2),"empate":round(ties/simulations*100,2),"derrota":round(losses/simulations*100,2),"simulaciones":simulations}
 
 
+
+# ============================================================
+# INTERPRETACIÓN AUTOMÁTICA DEL RESULTADO
+# ============================================================
+
+def interpret_result(result, board_cards, active_players):
+    """
+    Genera una lectura estadística neutral del resultado.
+
+    No recomienda apostar, igualar o retirarse porque esas
+    decisiones también requieren información sobre el bote,
+    el coste de continuar, la posición y los rangos rivales.
+    """
+
+    win_probability = result["victoria"]
+    tie_probability = result["empate"]
+    loss_probability = result["derrota"]
+    advantage = win_probability - loss_probability
+    board_size = len(board_cards)
+
+    if board_size == 0:
+        phase_name = "preflop"
+        uncertainty_text = (
+            "La incertidumbre todavía es elevada porque no se ha "
+            "mostrado ninguna carta comunitaria."
+        )
+    elif board_size == 3:
+        phase_name = "flop"
+        uncertainty_text = (
+            "La estimación todavía puede cambiar considerablemente "
+            "con el turn y el river."
+        )
+    elif board_size == 4:
+        phase_name = "turn"
+        uncertainty_text = (
+            "Solo queda una carta por aparecer, por lo que la "
+            "estimación es más estable que en el flop."
+        )
+    else:
+        phase_name = "river"
+        uncertainty_text = (
+            "La mesa está completa. La variación restante procede "
+            "de las posibles manos rivales."
+        )
+
+    if win_probability >= 75:
+        strength_text = "Tu mano presenta una ventaja estadística muy alta"
+    elif win_probability >= 60:
+        strength_text = "Tu mano presenta una ventaja estadística alta"
+    elif win_probability >= 50:
+        strength_text = "Tu mano presenta una ventaja estadística moderada"
+    elif win_probability >= 35:
+        strength_text = (
+            "El resultado está relativamente equilibrado, aunque "
+            "tu mano no parte con ventaja"
+        )
+    elif win_probability >= 20:
+        strength_text = "Tu mano presenta una probabilidad de victoria baja"
+    else:
+        strength_text = (
+            "Tu mano presenta una probabilidad de victoria muy reducida"
+        )
+
+    absolute_advantage = abs(advantage)
+
+    if absolute_advantage < 5:
+        comparison_text = (
+            "Victoria y derrota muestran valores muy próximos, por lo "
+            "que el escenario está estadísticamente equilibrado."
+        )
+    elif advantage >= 20:
+        comparison_text = (
+            "La probabilidad de victoria supera claramente a la "
+            "probabilidad de derrota."
+        )
+    elif advantage > 0:
+        comparison_text = (
+            "La probabilidad de victoria supera ligeramente a la "
+            "probabilidad de derrota."
+        )
+    elif advantage <= -20:
+        comparison_text = (
+            "La probabilidad de derrota supera claramente a la "
+            "probabilidad de victoria."
+        )
+    else:
+        comparison_text = (
+            "La probabilidad de derrota supera ligeramente a la "
+            "probabilidad de victoria."
+        )
+
+    if active_players >= 7:
+        players_text = (
+            f"El análisis incluye {active_players} jugadores activos. "
+            "Al competir contra muchos rivales, existen más "
+            "combinaciones capaces de superar tu mano."
+        )
+    elif active_players >= 4:
+        players_text = (
+            f"El análisis incluye {active_players} jugadores activos, "
+            "por lo que la mano se compara con varios rivales "
+            "simultáneamente."
+        )
+    else:
+        players_text = (
+            f"El análisis incluye {active_players} jugadores activos, "
+            "un escenario con pocos rivales."
+        )
+
+    if tie_probability >= 10:
+        tie_text = (
+            "La probabilidad de empate es relevante y puede estar "
+            "relacionada con combinaciones compartidas mediante las "
+            "cartas comunitarias."
+        )
+    elif tie_probability >= 3:
+        tie_text = (
+            "Existe una probabilidad apreciable de compartir la mejor "
+            "mano con uno o más rivales."
+        )
+    else:
+        tie_text = "Los empates tienen poca influencia en el resultado."
+
+    frequency = round(win_probability)
+
+    return {
+        "main": (
+            f"{strength_text}: gana aproximadamente {frequency} de cada "
+            f"100 escenarios simulados en la fase de {phase_name}."
+        ),
+        "comparison": comparison_text,
+        "uncertainty": uncertainty_text,
+        "players": players_text,
+        "tie": tie_text,
+    }
+
+
+# Estilo aislado para la interpretación.
+# No modifica los anchos de los selectores ni de los pop-ups.
+st.markdown(
+    r"""
+    <style>
+    .interpretation-card {
+        margin-top: 0.45rem;
+        margin-bottom: 0.20rem;
+        padding: 0.70rem 0.80rem;
+        background: linear-gradient(
+            145deg,
+            rgba(4, 42, 33, 0.94),
+            rgba(5, 58, 43, 0.88)
+        );
+        border: 1px solid rgba(99, 179, 255, 0.48);
+        border-radius: 10px;
+        color: #ffffff;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.22);
+    }
+
+    .interpretation-title {
+        margin-bottom: 0.38rem;
+        color: #8bc7ff;
+        font-size: 0.76rem;
+        font-weight: 800;
+        letter-spacing: 0.04rem;
+        text-transform: uppercase;
+    }
+
+    .interpretation-main {
+        margin-bottom: 0.42rem;
+        color: #ffffff;
+        font-size: 0.84rem;
+        font-weight: 700;
+        line-height: 1.48;
+    }
+
+    .interpretation-detail {
+        margin-top: 0.25rem;
+        color: rgba(255, 255, 255, 0.80);
+        font-size: 0.75rem;
+        line-height: 1.45;
+    }
+
+    .interpretation-note {
+        margin-top: 0.55rem;
+        padding-top: 0.45rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.14);
+        color: rgba(255, 255, 255, 0.62);
+        font-size: 0.66rem;
+        line-height: 1.40;
+    }
+
+    @media screen and (max-width: 640px) {
+        .interpretation-card {
+            margin-top: 0.35rem;
+            padding: 0.55rem 0.60rem;
+        }
+
+        .interpretation-title {
+            margin-bottom: 0.30rem;
+            font-size: 0.62rem;
+        }
+
+        .interpretation-main {
+            margin-bottom: 0.32rem;
+            font-size: 0.72rem;
+            line-height: 1.42;
+        }
+
+        .interpretation-detail {
+            margin-top: 0.20rem;
+            font-size: 0.66rem;
+            line-height: 1.40;
+        }
+
+        .interpretation-note {
+            margin-top: 0.40rem;
+            padding-top: 0.35rem;
+            font-size: 0.58rem;
+        }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+
 st.markdown('<div class="brand-header"><div class="brand-main"><span class="brand-symbol">♠</span><span>POKER LAB</span></div><div class="brand-signature">BY ÁLVARO HDEZ</div></div>', unsafe_allow_html=True)
 
 # ============================================================
@@ -606,6 +831,29 @@ if result and summary:
         '</div>'
     )
     st.markdown(results_html, unsafe_allow_html=True)
+
+    interpretation = interpret_result(
+        result=result,
+        board_cards=summary["board"],
+        active_players=summary["players"],
+    )
+
+    interpretation_html = (
+        '<div class="interpretation-card">'
+        '<div class="interpretation-title">Lectura del resultado</div>'
+        f'<div class="interpretation-main">{interpretation["main"]}</div>'
+        f'<div class="interpretation-detail">{interpretation["comparison"]}</div>'
+        f'<div class="interpretation-detail">{interpretation["uncertainty"]}</div>'
+        f'<div class="interpretation-detail">{interpretation["players"]}</div>'
+        f'<div class="interpretation-detail">{interpretation["tie"]}</div>'
+        '<div class="interpretation-note">'
+        'Esta lectura describe únicamente los resultados estadísticos '
+        'de la simulación. No constituye una recomendación de apuesta.'
+        '</div>'
+        '</div>'
+    )
+
+    st.markdown(interpretation_html, unsafe_allow_html=True)
 
     summary_html = (
         '<div class="hand-summary">'
